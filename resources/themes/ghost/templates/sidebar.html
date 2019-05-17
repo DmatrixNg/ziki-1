@@ -794,7 +794,8 @@
             {% if user.role == 'guest' | default(null) %}
             <ul class="list-unstyled CTAs d-flex justify-content-center">
               <li>
-                <a href="#"><button class="btn btn-light">Follow Me</button></a>
+                <a href="#"><button data-toggle="modal"
+                            data-target="#follow"class="btn btn-light">Follow Me</button></a>
               </li>
             </ul>
             {% endif %}
