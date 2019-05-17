@@ -8,6 +8,11 @@ $posts = $ziki->get();
 if (empty($posts)) {
     $posts = [];
 }
+$user = file_get_contents("./src/config/auth.json");
+$user = json_decode($user, true);
+$username = str_replace(' ', '', $user['name']);
+$GLOBALS['username'] = $username;
+
 Router::get('/', function ($request) {
     $user = new Ziki\Core\Auth();
     if ($user::isInstalled() == true) {
@@ -25,7 +30,8 @@ Router::get('/', function ($request) {
         $settings = $setting->getSetting();
         $fcount = $count->fcount();
         $count = $count->count();
-        return $this->template->render('index.html', ['posts' => $feed, 'host' => $host, 'count' => $count, 'fcount' => $fcount]);
+        $rss = SITE_URL.'/'.$GLOBALS['username'];
+        return $this->template->render('index.html', ['posts' => $feed, 'host' => $host, 'count' => $count, 'fcount' => $fcount, 'rss' => $rss]);
     }
 });
 foreach ($posts as $post) {
@@ -148,6 +154,13 @@ Router::get('/timeline', function ($request) {
     return $this->template->render('timeline.html', ['posts' => $post, 'count' => $count, 'fcount' => $fcount]);
 });
 
+Router::get($username, function ($request) {
+
+  header('Content-Type: application/xml');
+    include './storage/rss/rss.xml';
+
+});
+
 Router::get('/tags/{id}', function ($request, $id) {
     $user = new Ziki\Core\Auth();
     if (!$user->is_logged_in() || !$user->is_admin()) {
@@ -216,7 +229,7 @@ Router::post('/send', function ($request) {
     $SendMail = new SendContactMail();
     $SendMail->mailBody = $this->template->render('mail-template.html', ['guestName' => $request['guestName'], 'guestEmail' => $request['guestEmail'], 'guestMsg' => $request['guestMsg']]);
     $response = $SendMail->sendMail($request);
-    
+
     return json_encode($response);
 });
 Router::post('/setcontactemail', function ($request) {
