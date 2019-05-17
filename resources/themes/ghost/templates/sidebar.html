@@ -691,6 +691,7 @@
               {% endif %}
             </div>
           </div>
+	{% if count > 0 %}
           <div class="row">
             <div class="col-sm-6 text-right follows">
               <a href="/following"><b>{{count}}</b> <span class="purple">Following</span></a>
@@ -699,6 +700,7 @@
               <a href="/followers"><b>{{fcount}}</b> <span class="purple">Followers</span></a>
             </div>
           </div>
+	{% endif %}
           <hr>
           <!-- <strong>BS</strong> -->
         </div>

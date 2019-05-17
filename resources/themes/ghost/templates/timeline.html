@@ -24,12 +24,24 @@
   }
 
   .ql-toolbar.ql-snow + .ql-container.ql-snow {
-    border-top: 1px !important;
-    border-bottom: 0px;
+    border: none !important;
   }
 
   .ql-editor {
-      border:1px solid #ccc !important;
+      border:none !important;
+  }
+  .ql-toolbar.ql-snow {
+    border: none !important;
+  }
+
+  .white-background{background-color: #fff; border-radius: 5px;}
+  .form-control {
+    border: none !important;
+  }
+
+  .micro-blog-enclosure{
+    background-color: #E0E0E0;
+    border-radius: 10px;
   }
 
   .editor-btns {
@@ -204,100 +216,105 @@
   }
 </style>
 
-
-      <!-- Page Content section -->
-      <div id="content">
-       {% include "navbar-auth.html" %}
-        <!-- editor -->
-        <div class="row">
-          <div class="col-12 col-sm-1"></div>
-          <div class="col-12 col-sm-10">
-            <!-- The editor code goes here -->
-            <div id="form-container">
-              <form method="POST" class="timeline-editor" id="editor-form">
+<!-- Page Content section -->
+<div id="content">
+ {% include "navbar-auth.html" %}
+  <!-- editor -->
+  <div class="row">
+    <div class="col-12 col-sm-1"></div>
+    <div class="col-12 col-sm-10">
+      <!-- The editor code goes here -->
+      <div id="form-container">
+        <form method="POST" class="timeline-editor" id="editor-form">
+          <div class="micro-blog-enclosure row pt-3 pb-3">
+            <div class="col-12">
+              <div class="row">
+                <div class="col-12 text-right">
+                  <span id="num_char" class="badge badge-warning">Micro-Blog Mode</span>
+                </div>
+              </div>
+              <div class="white-background mt-3 mb-3">
+              <div class="row pt-3 pb-2">
+                <div class="col-12">
+                  <div class="row form-group">
+                    <div class="col-12" id="titleBox">
+                      <label for="new-post-title" class="sr-only">Title</label>
+                      <input type="text" id="new-post-title" class="form-control hide" placeholder="Title"/>
+                    </div>
+                    <div class="col-12">
+                      <div id="editor">{{ post.body|raw }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-4">
+                <div class="col-12">
                 <div class="row">
-                  <div class="col-12 text-right">
-                    <span id="num_char" class="badge badge-warning">Micro-Blog Mode</span>
-                  </div>
-                </div>
-                <div class="row pt-3 pb-2">
-                  <div class="col-12">
-                    <div class="row form-group">
-                      <div class="col-12" id="titleBox">
-                        <label for="new-post-title" class="sr-only">Title</label>
-                        <input type="text" id="new-post-title" class="form-control hide" placeholder="Title"/>
-                      </div>
-                      <div class="col-12">
-                        <div id="editor">{{ post.body|raw }}</div>
-                      </div>
+                  <div class="col-12 collapse" id="collapseExample">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Politics">
+                      <label class="form-check-label" for="inlineCheckbox1">Politics</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Sports">
+                      <label class="form-check-label" for="inlineCheckbox1">Sports</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Health">
+                      <label class="form-check-label" for="inlineCheckbox1">Health</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Technology">
+                      <label class="form-check-label" for="inlineCheckbox1">Technology</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Music">
+                      <label class="form-check-label" for="inlineCheckbox1">Music</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#News-Lifestyle">
+                      <label class="form-check-label" for="inlineCheckbox1">News-Lifestyle</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Movies">
+                      <label class="form-check-label" for="inlineCheckbox1">Movies</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Fitness">
+                      <label class="form-check-label" for="inlineCheckbox1">Fitness</label>
                     </div>
                   </div>
                 </div>
-                <div class="row mt-4">
-                  <div class="col-12">
-                  <div class="row">
-                    <div class="col-12 collapse" id="collapseExample">
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Politics">
-                        <label class="form-check-label" for="inlineCheckbox1">Politics</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Sports">
-                        <label class="form-check-label" for="inlineCheckbox1">Sports</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Health">
-                        <label class="form-check-label" for="inlineCheckbox1">Health</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Technology">
-                        <label class="form-check-label" for="inlineCheckbox1">Technology</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Music">
-                        <label class="form-check-label" for="inlineCheckbox1">Music</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#News-Lifestyle">
-                        <label class="form-check-label" for="inlineCheckbox1">News-Lifestyle</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Movies">
-                        <label class="form-check-label" for="inlineCheckbox1">Movies</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input tags" type="checkbox" id="inlineCheckbox1" value="#Fitness">
-                        <label class="form-check-label" for="inlineCheckbox1">Fitness</label>
-                      </div>
-                    </div>
-                  </div>
-                  </div>
                 </div>
-                <div class="row pt-2">
-                  <div class="col-12">
-                    <div class="row form-row flex-row-reverse">
-                      <div class="col-3 col-sm-1">
-                        <input type="reset" class="form-control btn-sm btn btn-primary canel-post" value="Cancel">
-                      </div>
-                      <div class="col-3 col-sm-1">
-                        <input type="button" class="form-control btn-sm btn btn-primary save-draft" value="Save Draft"/>
-                      </div>
-                      <div class="col-3 col-sm-1">
-                        <input type="submit" class="form-control btn-sm btn btn-primary publish-post" value="Publish">
-                      </div>
-                      <div class="col-3 col-sm-1">
-                        <input class="form-control btn-sm btn btn-primary add-tags" type="button" data-toggle="collapse" data-target="  #collapseExample"   aria-expanded="false" aria-controls="collapseExample" value="Add Tags">
-                      </div>
-                    </div>
-                  </div>
+              </div>
+            </div>
+            </div>
+            <div class="col-12">
+              <div class="row form-row flex-row-reverse">
+                <div class="col-3 col-sm-1">
+                  <input type="reset" class="form-control btn-sm btn btn-primary canel-post" value="Cancel">
                 </div>
-              </form>
+                <div class="col-3 col-sm-1">
+                  <input type="button" class="form-control btn-sm btn btn-primary save-draft" value="Save Draft"/>
+                </div>
+                <div class="col-3 col-sm-1">
+                  <input type="submit" class="form-control btn-sm btn btn-primary publish-post" value="Publish">
+                </div>
+                <div class="col-3 col-sm-1">
+                  <input class="form-control btn-sm btn btn-primary add-tags" type="button" data-toggle="collapse" data-target="  #collapseExample"   aria-expanded="false" aria-controls="collapseExample" value="Add Tags">
+                </div>
+              </div>
             </div>
           </div>
-          <div class="col-12 col-sm-1"></div>
-        </div>
+          <!-- <div class="row pt-2">
+            
+          </div> -->
+        </form>
+      </div>
+    </div>
+    <div class="col-11 col-sm-1"></div>
 
-        <!-- Feed listing -->
+           <!-- Feed listing -->
         {% for key, feed in posts %}
         <div class="row pt-4 pb-4">
           <div class="col-12 col-sm-1"></div>
@@ -314,7 +331,7 @@
                     <a href="{{feed.link}}">
                         <h3><b>{{feed.title | raw}}</b></h3>
                     </a>
-                      {% if feed.image %}
+                    {% if feed.image %}
 
                       <img src="{{feed.image | raw}}" alt="{{feed.title | raw}}" class="img-fluid blog-image w-100" />
 
@@ -334,8 +351,9 @@
         </div>
         {% endfor %}
         <!-- Feed section ends here -->
-      </div>
   </div>
+</div>
+</div>
 </div>
 </div>
 {% endblock page_content %}
