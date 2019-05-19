@@ -51,6 +51,12 @@ class Router
     private function _match($route,$request) {
         $params = [];
         $exp_request = explode('/', $request);
+        $pathToApp = explode(DIRECTORY_SEPARATOR,ZIKI_BASE_PATH);
+        if($exp_request[0] == end($pathToApp) )
+        {
+            array_shift($exp_request);
+        }
+        //print_r($pathToApp);
         $exp_route = explode('/', $route);
         // dd($exp_request, $request, $exp_route, $route);
         if (count($exp_request) == count($exp_route)) {
