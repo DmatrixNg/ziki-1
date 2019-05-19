@@ -6,15 +6,18 @@
     @import 'resources/themes/ghost/assets/css/settings.css';
 </style>
 <div id="content" class="container">
+    <!-- nav bar here -->
+    {% include "navbar-auth.html" %}
     <div class="row">
         <div class="col-lg-11 col-md-11 col-sm-12 col-xs-12 mt-3 offset-md-1 offset-lg-1 pr-5">
 
-            {% set navigation = [
-                {'href': 'settings', 'caption': 'Settings'},
-                {'href': 'profile', 'caption': 'Profile'},                
-                {'href': 'subscriptions', 'caption': 'Subscriptions' }
-            ]
-            %}
+                {% set navigation = [
+                    {'href': 'settings', 'caption': 'Settings'},
+                    {'href': 'profile', 'caption': 'Profile'},
+                    {'href': 'subscribers', 'caption': 'Subscribers'},
+                    {'href': 'subscriptions', 'caption': 'Subscriptions'}
+                    ]
+                    %}
 
             {% include "navtabs.html" with {'current_page': 'settings'} %}
 
@@ -96,7 +99,6 @@
                         <!-- theme list: the idea is to load from a theme.json file -->
                         {% set themeList = [
                             {'name': 'Ghost', 'alias': 'ghost', 'imagePath': '/resources/themes/ghost/assets/img/theme1.png', color: '#280A66'},
-                            {'name': 'Ruby', 'alias': 'ruby', 'imagePath': '/resources/themes/ghost/assets/img/theme2.png', color: '#C61639'},
                             ]
                         %}
                         <div class="col-lg-12 col-md-12 col-sm-6 order-lg-1 order-md-1 order-sm-1 order-1 pb-3 px-0">

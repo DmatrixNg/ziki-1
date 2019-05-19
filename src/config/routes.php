@@ -2,6 +2,17 @@
 use Ziki\Http\Router;
 
 session_start();
+$directory = "./storage/contents/";
+$ziki = new Ziki\Core\Document($directory);
+$posts = $ziki->get();
+if (empty($posts)) {
+    $posts = [];
+}
+$user = file_get_contents("./src/config/auth.json");
+$user = json_decode($user, true);
+$username = str_replace(' ', '', $user['name']);
+$GLOBALS['username'] = $username;
+
 Router::get('/', function ($request) {
     $user = new Ziki\Core\Auth();
     if ($user::isInstalled() == true) {
@@ -19,47 +30,119 @@ Router::get('/', function ($request) {
         $settings = $setting->getSetting();
         $fcount = $count->fcount();
         $count = $count->count();
-        return $this->template->render('index.html', ['posts' => $feed, 'host' => $host, 'count' => $count, 'fcount' => $fcount]);
+        $rss = SITE_URL.'/'.$GLOBALS['username'];
+        return $this->template->render('index.html', ['posts' => $feed, 'host' => $host, 'count' => $count, 'fcount' => $fcount, 'rss' => $rss]);
     }
 });
-Router::get('/post/{post_id}', function ($request, $post_id) {
+foreach ($posts as $post) {
+    if (empty($post['post_title'])) {
+        Router::get('/post/{post_id}', function ($request, $post_id) {
 
+            $directory = "./storage/contents/";
+            $ziki = new Ziki\Core\Document($directory);
+            $setting = new Ziki\Core\Setting();
+            $settings = $setting->getSetting();
+            $data = $request->getBody();
+            //echo $data;
+            $result = $ziki->getEach($post_id);
+            $count = new Ziki\Core\Subscribe();
+            $fcount = $count->fcount();
+            $count = $count->count();
+            if (isset($_GET['d'])) {
+
+                $url = isset($_GET['d']) ? $_GET['d'] : '';
+                //echo $url;
+                $url = isset($_GET['d']) ? trim(base64_decode($_GET['d'])) : "";
+                //echo $url;
+                $url = $url . "/storage/rss/rss.xml";
+                $rss = Ziki\Core\Subscribe::subc($url);
+                //echo $url;
+            }
+
+            $post_details = $ziki->getPost($post_id);
+            $tags = [];
+            if (isset($post_details['tags'])) {
+                foreach ($post_details['tags'] as $tag) {
+                    $tags[] = '#' . $tag;
+                }
+            }
+            $siteUrl = SITE_URL;
+            $relatedPosts = $ziki->getRelatedPost(4, $tags, $post_id);
+            return $this->template->render('blog-details.html', ['result' => $result, 'count' => $count, 'fcount' => $fcount, 'post' => $post_details, 'relatedPosts' => $relatedPosts, 'siteUrl' => $siteUrl]);
+        });
+    } else {
+        Router::get('/post/{post_id}/{post_title}', function ($request, $post_id) {
+
+            $directory = "./storage/contents/";
+            $ziki = new Ziki\Core\Document($directory);
+            $setting = new Ziki\Core\Setting();
+            $settings = $setting->getSetting();
+            $data = $request->getBody();
+            //echo $data;
+            $result = $ziki->getEach($post_id);
+            $count = new Ziki\Core\Subscribe();
+            $fcount = $count->fcount();
+            $count = $count->count();
+            if (isset($_GET['d'])) {
+
+                $url = isset($_GET['d']) ? $_GET['d'] : '';
+                //echo $url;
+                $url = isset($_GET['d']) ? trim(base64_decode($_GET['d'])) : "";
+                //echo $url;
+                $url = $url . "/storage/rss/rss.xml";
+                $rss = Ziki\Core\Subscribe::subc($url);
+                //echo $url;
+            }
+            $post_id = explode(',', $post_id);
+            $post_details = $ziki->getPost($post_id[0]);
+            $tags = [];
+            if (isset($post_details['tags'])) {
+                foreach ($post_details['tags'] as $tag) {
+                    $tags[] = '#' . $tag;
+                }
+            }
+            $siteUrl = SITE_URL;
+            $relatedPosts = $ziki->getRelatedPost(4, $tags, $post_id[0]);
+            return $this->template->render('blog-details.html', ['result' => $result, 'count' => $count, 'fcount' => $fcount, 'post' => $post_details, 'relatedPosts' => $relatedPosts, 'siteUrl' => $siteUrl]);
+        });
+    }
+}
+
+
+Router::post('/edit-post', function ($request) {
+    $user = new Ziki\Core\Auth();
+    if (!$user->is_logged_in() || !$user->is_admin()) {
+        return $user->redirect('/');
+    }
     $directory = "./storage/contents/";
+    $request = $request->getBody();
+    $title = isset($request['title']) ? $request['title'] : '';
+    $body = $request['postVal'];
+    $tags = $request['tags'];
+    $postSlug = explode('-', $request['postId']);
+    $post_id = end($postSlug);
+    // filter out non-image data
+    $initial_images = array_filter($request, function ($key) {
+        return preg_match('/^img-\w*$/', $key);
+    }, ARRAY_FILTER_USE_KEY);
+    // PHP automatically converts the '.' of the extension to an underscore
+    // undo this
+
+    $images = [];
+    foreach ($initial_images as $key => $value) {
+        $newKey = preg_replace('/_/', '.', $key);
+        $images[$newKey] = $value;
+    }
+    $extra = "";
+    //return json_encode([$images]);
     $ziki = new Ziki\Core\Document($directory);
-    $setting = new Ziki\Core\Setting();
-    $settings = $setting->getSetting();
-    $data = $request->getBody();
-    //echo $data;
-    $result = $ziki->getEach($post_id);
-    $count = new Ziki\Core\Subscribe();
-    $fcount = $count->fcount();
-    $count = $count->count();
-    if (isset($_GET['d'])) {
-
-        $url = isset($_GET['d']) ? $_GET['d'] : '';
-        //echo $url;
-        $url = isset($_GET['d']) ? trim(base64_decode($_GET['d'])) : "";
-        //echo $url;
-        $url = $url . "storage/rss/rss.xml";
-        $rss = Ziki\Core\Subscribe::subc($url);
-        //echo $url;
-    }
-    $post_id = explode('-', $post_id);
-    $post = end($post_id);
-    $post_details = $ziki->getPost($post);
-    $tags = [];
-    if (isset($post_details['tags'])) {
-        foreach ($post_details['tags'] as $tag) {
-            $tags[] = '#' . $tag;
-        }
-    }
-
-    $relatedPosts = $ziki->getRelatedPost(4, $tags, $post);
-    return $this->template->render('blog-details.html', ['result' => $result, 'count' => $count, 'fcount' => $fcount, 'post' => $post_details, 'relatedPosts' => $relatedPosts]);
+    $result = $ziki->update_Post($title, $body, $tags, $images, $extra, $post_id);
+    return json_encode($result);
 });
+
 Router::get('/timeline', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $directory = "./storage/contents/";
@@ -71,9 +154,16 @@ Router::get('/timeline', function ($request) {
     return $this->template->render('timeline.html', ['posts' => $post, 'count' => $count, 'fcount' => $fcount]);
 });
 
+Router::get($username, function ($request) {
+
+  header('Content-Type: application/xml');
+    include './storage/rss/rss.xml';
+
+});
+
 Router::get('/tags/{id}', function ($request, $id) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $count = new Ziki\Core\Subscribe();
@@ -87,13 +177,13 @@ Router::get('/tags/{id}', function ($request, $id) {
 });
 Router::post('/publish', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
 
     $directory = "./storage/contents/";
     $data = $request->getBody();
-    $title = $data['title'];
+    $title = isset($data['title']) ? $data['title'] : '';
     $body = $data['postVal'];
     $tags = $data['tags'];
     // filter out non-image data
@@ -108,9 +198,10 @@ Router::post('/publish', function ($request) {
         $images[$newKey] = $value;
     }
     //return json_encode([$images]);
+    $extra = "";
     $ziki = new Ziki\Core\Document($directory);
     $result = $ziki->create($title, $body, $tags, $images, $extra);
-    return $this->template->render('timeline.html', ['ziki' => $result, 'host' => $host, 'count' => $count, 'fcount' => $fcount]);
+    return json_encode($result);
 });
 //this are some stupid working code written by porh please don't edit
 //without notifying me
@@ -137,11 +228,15 @@ Router::post('/send', function ($request) {
     $request = $request->getBody();
     $SendMail = new SendContactMail();
     $SendMail->mailBody = $this->template->render('mail-template.html', ['guestName' => $request['guestName'], 'guestEmail' => $request['guestEmail'], 'guestMsg' => $request['guestMsg']]);
-    $SendMail->sendMail($request);
-    $SendMail->clientMessage();
-    return $SendMail->redirect('/about');
+    $response = $SendMail->sendMail($request);
+
+    return json_encode($response);
 });
 Router::post('/setcontactemail', function ($request) {
+    $user = new Ziki\Core\Auth();
+    if (!$user->is_logged_in() || !$user->is_admin()) {
+        return $user->redirect('/');
+    }
     include ZIKI_BASE_PATH . "/src/core/SendMail.php";
     $request = $request->getBody();
     $SetContactEmail = new SendContactMail();
@@ -150,24 +245,47 @@ Router::post('/setcontactemail', function ($request) {
     return $SetContactEmail->redirect('/profile');
 });
 Router::post('/updateabout', function ($request) {
-    include ZIKI_BASE_PATH . "/src/core/SendMail.php";
+    $user = new Ziki\Core\Auth();
+    $update = new Ziki\Core\Profile();
     $request = $request->getBody();
-    $updateabout = new SendContactMail();
-    $updateabout->updateAbout($request);
-    $updateabout->clientMessage();
-    return $updateabout->redirect('/profile');
+    $profile = $update->updateProfile($request);
+    $_SESSION['alert']=$profile;
+    return $user->redirect('/profile');
+});
+Router::post('/edit-about', function ($request) {
+    $request = $request->getBody();
+    $page = new Ziki\Core\Page();
+    $response = $page->setAboutPage($request);
+    return json_encode($response);
 });
 Router::get('/deletepost/{postId}', function ($request, $postId) {
+    $user = new Ziki\Core\Auth();
+    if (!$user->is_logged_in() || !$user->is_admin()) {
+        return $user->redirect('/');
+    }
     $postid = explode('-', $postId);
     $post = end($postid);
     $directory = "./storage/contents/";
     $ziki = new Ziki\Core\Document($directory);
     $ziki->deletePost($post);
+    return $user->redirect('/published-posts');
+});
+Router::get('/deletedraft/{postId}', function ($request, $postId) {
+    $user = new Ziki\Core\Auth();
+    if (!$user->is_logged_in() || !$user->is_admin()) {
+        return $user->redirect('/');
+    }
+    $postid = explode('-', $postId);
+    $post = end($postid);
+    $directory = "./storage/drafts/";
+    $ziki = new Ziki\Core\Document($directory);
+    $ziki->deletePost($post);
+    return $user->redirect('/drafts');
 });
 //the stupid codes ends here
 Router::get('delete/{id}', function ($request, $id) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return new RedirectResponse("/");
     }
     $directory = "./storage/contents/";
@@ -177,7 +295,7 @@ Router::get('delete/{id}', function ($request, $id) {
 });
 Router::get('/published-posts', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $directory = "./storage/contents/";
@@ -187,25 +305,11 @@ Router::get('/published-posts', function ($request) {
 });
 
 // Kuforiji' codes start here
-// Start- Portfolio page
-Router::get('/portfolio', function ($request) {
-    $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
-        return $user->redirect('/');
-    }
-    $count = new Ziki\Core\Subscribe();
-    $fcount = $count->fcount();
-    $count = $count->count();
-    // This is how to use a class @kuforiji
-    $portfolio = new Ziki\Core\Portfolio(); // Then you can go ahead to use the $portfolio to call other methods inside your class
-    return $this->template->render('portfolio.html');
-});
-// End- Portfolio
 
 // Start- Portfolio_expanded page
 Router::get('/portfolio-expanded', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $count = new Ziki\Core\Subscribe();
@@ -215,30 +319,16 @@ Router::get('/portfolio-expanded', function ($request) {
 });
 // End- Portfolio_expanded
 
-
-// route to create-portfolio page
-Router::get('/new-portfolio', function ($request) {
-    $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
-        return $user->redirect('/');
-    }
-    $count = new Ziki\Core\Subscribe();
-    $fcount = $count->fcount();
-    $count = $count->count();
-    return $this->template->render('create-portfolio.html');
-});
-
-// logic for creating a new portfolio 
+// logic for creating a new portfolio
 Router::post('/newportfolio', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $directory = "./storage/portfolio/";
     $data = $request->getBody();
     $title = $data['title'];
     $body = $data['postVal'];
-    $tags = $data['tags'];
     // filter out non-image data
     $initial_images = array_filter($data, function ($key) {
         return preg_match('/^img-\w*$/', $key);
@@ -251,9 +341,76 @@ Router::post('/newportfolio', function ($request) {
         $images[$newKey] = $value;
     }
     //return json_encode([$images]);
-    $ziki = new Ziki\Core\Portfolio($directory);
-    $result = $ziki->createportfolio($title, $body, $images);
+    $portfolio = new Ziki\Core\Portfolio($directory);
+    $result = $portfolio->createportfolio($title, $body, $images);
     return $this->template->render('portfolio.html');
+});
+
+// route to create-portfolio page
+Router::get('/portfolio', function ($request) {
+    $user = new Ziki\Core\Auth();
+    if (!$user->is_logged_in() || !$user->is_admin()) {
+        return $user->redirect('/');
+    }
+    $count = new Ziki\Core\Subscribe();
+    $fcount = $count->fcount();
+    $count = $count->count();
+    $directory = "./storage/portfolio/";
+    $portfolio = new Ziki\Core\Portfolio($directory);
+    $portfolio = $portfolio->getportfolio();
+    return $this->template->render('portfolio.html', ['portf' => $portfolio]);
+});
+
+// get portfolio expanded details
+Router::get('/portfolio/{post_id}', function ($request, $port_id) {
+
+    $directory = "./storage/portfolio/";
+    $portfolio = new Ziki\Core\Portfolio($directory);
+
+    //echo $data;
+    $result = $portfolio->getEachPortfolio($port_id);
+    $count = new Ziki\Core\Subscribe();
+    $fcount = $count->fcount();
+    $count = $count->count();
+    if (isset($_GET['d'])) {
+
+        $url = isset($_GET['d']) ? $_GET['d'] : '';
+        //echo $url;
+        $url = isset($_GET['d']) ? trim(base64_decode($_GET['d'])) : "";
+        //echo $url;
+        $url = $url . "storage/rss/rss.xml";
+        $rss = Ziki\Core\Subscribe::subc($url);
+        //echo $url;
+    }
+    $port_id = explode('-', $port_id);
+    $post = end($port_id);
+    $portfolio_details = $portfolio->getOnePortfolio($post);
+
+    return $this->template->render('portfolio-expanded.html', ['result' => $result, 'count' => $count, 'fcount' => $fcount, 'post' => $portfolio_details]);
+});
+
+Router::get('/deleteportfolio/{portfolioId}', function ($request, $portfolioId) {
+    $user = new Ziki\Core\Auth();
+    if (!$user->is_logged_in() || !$user->is_admin()) {
+        return $user->redirect('/');
+    }
+    $portfolioId = explode('-', $portfolioId);
+    $portf = end($portfolioId);
+    $directory = "./storage/portfolio/";
+    $portfolio = new Ziki\Core\Portfolio($directory);
+    $portfolio->deletePortfolio($portf);
+    return $user->redirect('/portfolio');
+});
+
+Router::get('delete/{id}', function ($request, $id) {
+    $user = new Ziki\Core\Auth();
+    if (!$user->is_logged_in() || !$user->is_admin()) {
+        return new RedirectResponse("/");
+    }
+    $directory = "./storage/portfolio/";
+    $portfolio = new Ziki\Core\Portfolio($directory);
+    $result = $portfolio->delete($id);
+    return $this->template->render('portfolio.html', ['delete' => $result]);
 });
 
 // Kuforiji' codes end here
@@ -262,7 +419,7 @@ Router::post('/newportfolio', function ($request) {
 // ahmzyjazzy add this (^_^) : setting page
 Router::get('/settings', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $count = new Ziki\Core\Subscribe();
@@ -273,12 +430,6 @@ Router::get('/settings', function ($request) {
 
 // ahmzyjazzy add this (^_^) : setting api
 Router::post('/appsetting', function ($request) {
-
-    //create middleware to protect api from non auth user
-    //$user = new Ziki\Core\Auth();
-    //if (!$user->is_logged_in()) {
-    //    return json_encode(array("msg" => "Authentication failed, pls login.", "status" => "error", "data" => null));
-    //}
 
     $data = $request->getBody();
     $field = $data['field']; //field to update in  app.json
@@ -302,18 +453,19 @@ Router::post('/appsetting', function ($request) {
     }
 });
 
-// profile page
-Router::get('/profile', function ($request) {
-    ///please don't remove or change the included path
-    include ZIKI_BASE_PATH . "/src/core/SendMail.php";
-    //please don't rename the variables
-    $userSiteDetails = new  SendContactMail();
-    //this  gets the owners email address
-    $userEmailAddr = $userSiteDetails->getOwnerEmail();
-    //this gets the page content
-    $getAboutPageContent = $userSiteDetails->getPage();
+
+//profile fullname and short bio update
+Router::post('/sidebar ', function ($request) {
+    include ZIKI_BASE_PATH . "/src/core/profile.php";
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    $instantiateClass = new Ziki\Core\profileUpdate();
+    $getUserInfo = $instantiateClass->getPage();
+    //  $fullName = $this->fullname;
+    //  $shortBio = $this->shortbio;
+    //this gets the page content
+    //   $getAboutPageContent = $userSiteDetails->getPage();
+    $user = new Ziki\Core\Auth();
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     //this for error and successs messages
@@ -326,13 +478,39 @@ Router::get('/profile', function ($request) {
     $fcount = $count->fcount();
     $count = $count->count();
 
-    return $this->template->render('profile.html', ['message' => $message, 'userEmailAddr' => $userEmailAddr, 'about' => $getAboutPageContent]);
+    return $this->template->render('sidebar.html', ['fullName' => $getUserInfo, 'shortBio' => $getUserInfo]);
+});
+
+// profile page
+Router::get('/profile', function ($request) {
+    ///please don't remove or change the included path
+    include ZIKI_BASE_PATH . "/src/core/SendMail.php";
+    //please don't rename the variables
+    //$userSiteDetails = new  SendContactMail();
+    //this  gets the owners email address
+    // $userEmailAddr = $userSiteDetails->getOwnerEmail();
+    //this gets the page content
+    //$getAboutPageContent = $userSiteDetails->getPage();
+    $user = new Ziki\Core\Auth();
+    if (!$user->is_logged_in() || !$user->is_admin()) {
+        return $user->redirect('/');
+    }
+    //this for error and successs messages
+    $alert = [];
+    if (isset($_SESSION['alert'])) {
+        $alert = $_SESSION['alert'];
+        unset($_SESSION['alert']);
+    }
+    $count = new Ziki\Core\Subscribe();
+    $fcount = $count->fcount();
+    $count = $count->count();
+    return $this->template->render('profile.html',['alert'=>$alert]);
 });
 
 // following page
 Router::get('/following', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $directory = "./storage/contents/";
@@ -348,7 +526,7 @@ Router::get('/following', function ($request) {
 // followers page
 Router::get('/followers', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $directory = "./storage/contents/";
@@ -364,7 +542,7 @@ Router::get('/followers', function ($request) {
 // Subscription page
 Router::post('/subscriptions', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $directory = "./storage/contents/";
@@ -382,7 +560,7 @@ Router::post('/subscriptions', function ($request) {
 // Subscribers page
 Router::get('/subscribers', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $directory = "./storage/contents/";
@@ -396,7 +574,7 @@ Router::get('/subscribers', function ($request) {
 });
 Router::get('/unsubscribe', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
 
@@ -405,19 +583,37 @@ Router::get('/unsubscribe', function ($request) {
     $list = $ziki->unfollow($id);
     return $user->redirect('/subscriptions');
 });
+
 //stupid code by problemSolved
-Router::get('/editor/{postID}', function ($request, $postID) {
-    $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
-        return $user->redirect('/');
+
+foreach ($posts as $post) {
+    if (empty($post['post_title'])) {
+        Router::get('/editor/{post_id}', function ($request, $post_id) {
+            $user = new Ziki\Core\Auth();
+            if (!$user->is_logged_in() || !$user->is_admin()) {
+                return $user->redirect('/');
+            }
+            $directory = "./storage/contents/";
+            $ziki = new Ziki\Core\Document($directory);
+            $post_details = $ziki->getPost($post_id);
+            return $this->template->render('editor.html', ['post' => $post_details]);
+        });
+    } else {
+        Router::get('/editor/{post_id}/{post_title}', function ($request, $post_id) {
+            $user = new Ziki\Core\Auth();
+            if (!$user->is_logged_in() || !$user->is_admin()) {
+                return $user->redirect('/');
+            }
+            $directory = "./storage/contents/";
+            $ziki = new Ziki\Core\Document($directory);
+            $getId = explode(',', $post_id);
+            $post_details = $ziki->getPost($getId[0]);
+            return $this->template->render('editor.html', ['post' => $post_details]);
+        });
     }
-    $postid = explode('-', $postID);
-    $post = end($postid);
-    $directory = "./storage/contents/";
-    $ziki = new Ziki\Core\Document($directory);
-    $post_details = $ziki->getPost($post);
-    return $this->template->render('editor.html', ['post' => $post_details]);
-});
+}
+
+
 //ends here again;
 // 404 page
 Router::get('/404', function ($request) {
@@ -439,7 +635,7 @@ Router::get('/blog-details', function ($request) {
 Router::get('/followers', function ($request) {
 
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $count = new Ziki\Core\Subscribe();
@@ -454,7 +650,7 @@ Router::get('/followers', function ($request) {
 Router::get('/following', function ($request) {
 
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $directory = "./storage/contents/";
@@ -472,12 +668,12 @@ Router::get('/following', function ($request) {
 /* Save draft*/
 Router::post('/saveDraft', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $directory = "./storage/drafts/";
     $data = $request->getBody();
-    $title = $data['title'];
+    $title = isset($data['title']) ? $data['title'] : '';
     $body = $data['postVal'];
     $tags = $data['tags'];
     $initial_images = array_filter($data, function ($key) {
@@ -495,14 +691,14 @@ Router::post('/saveDraft', function ($request) {
     $count = new Ziki\Core\Subscribe();
     $fcount = $count->fcount();
     $count = $count->count();
-    return $this->template->render('drafts.html', ['ziki' => $result]);
+    return json_encode($result);
 });
 
 /* Save draft */
 /* Get all saved draft */
 Router::get('/drafts', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $directory = "./storage/drafts/";
@@ -528,7 +724,7 @@ Router::get('/videos', function ($request) {
 });
 Router::get('/microblog', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     //print_r($Videos);
@@ -592,6 +788,11 @@ Router::post('/setup', function ($request) {
     }
 });
 
+Router::post('/setup/email/login/{address}', function ($request) {
+    $user = new Ziki\Core\Auth();
+    die("good");
+});
+
 Router::get('/install', function ($request) {
     $user = new Ziki\Core\Auth();
     $system = new Ziki\Core\System();
@@ -621,7 +822,7 @@ Router::post('/addrss', function ($request) {
 /* Add Video*/
 Router::post('/addvideo', function ($request) {
     $user = new Ziki\Core\Auth();
-    if (!$user->is_logged_in()) {
+    if (!$user->is_logged_in() || !$user->is_admin()) {
         return $user->redirect('/');
     }
     $directory = "./storage/videos/";
