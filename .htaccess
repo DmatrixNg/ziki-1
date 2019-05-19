@@ -4,7 +4,7 @@
     </IfModule>
 
     RewriteEngine On
-
+    
     ## Begin - Exploits
     # If you experience problems on your site block out the operations listed below
     # This attempts to block the most common type of exploit `attempts` to Ziki
