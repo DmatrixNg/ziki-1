@@ -50,16 +50,37 @@ class Router
 	 */
     private function _match($route,$request) {
         $params = [];
-        $exp_request = explode('/', $request);
         $pathToApp = explode(DIRECTORY_SEPARATOR,ZIKI_BASE_PATH);
-        if($exp_request[0] == end($pathToApp) )
+        $request = explode(end($pathToApp),$request);
+        $trimWhiteSpace = array_filter(array_map('trim', explode('/', end($request))));
+        $exp_request=[];
+        foreach($trimWhiteSpace as $trimmedWhiteSpace)
         {
-            array_shift($exp_request);
+            $exp_request[]=$trimmedWhiteSpace;
         }
-        //print_r($pathToApp);
+        if(empty($exp_request))
+        {
+            $exp_request=['',''];
+        }
         $exp_route = explode('/', $route);
+        
+        // if($exp_request[0] == end($pathToApp) )
+        // {
+        //     array_shift($exp_request);
+        //     if(empty($exp_request))
+        //     {
+        //         $exp_request = ['',''];
+        //     }
+        // }
+
+        
+        
+        
+       
+
+        //print_r($exp_route); echo "route<br><br>";
         // dd($exp_request, $request, $exp_route, $route);
-        if (count($exp_request) == count($exp_route)) {
+         if (count($exp_request) == count($exp_route)) {
             foreach($exp_route as $key => $value) {
                 // echo $value[0];
                 // print "\n";
@@ -78,9 +99,9 @@ class Router
                 return false; // There is a mis-match
             }
             return $params; // All segments match
-        }
+       }
         return false; // Catch anything else
-    }
+   }
     /**
      * Removes trailing forward slashes from the right of the path.
      * @param route (string)
