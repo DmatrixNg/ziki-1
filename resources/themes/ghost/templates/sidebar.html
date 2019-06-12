@@ -694,7 +694,7 @@
           </div>
           <div class="row">
             <div class="col-12 col-sm-12">
-              <h3 class="text-center pt-4"><a href="/following"
+              <h3 class="text-center pt-4"><a href="./following"
                   class="pt-4 owner-name purple"><b>{{settings.name}}</b></a></h3>
 
               {% if settings.siteTagline|default(null) %}
@@ -705,10 +705,10 @@
           {% if count > 0 %}
           <div class="row">
             <div class="col-sm-6 text-right follows">
-              <a href="/following"><b>{{count}}</b> <span class="purple">Following</span></a>
+              <a href="./following"><b>{{count}}</b> <span class="purple">Following</span></a>
             </div>
             <div class="col-sm-6 text-left follows">
-              <a href="/followers"><b>{{fcount}}</b> <span class="purple">Followers</span></a>
+              <a href="./followers"><b>{{fcount}}</b> <span class="purple">Followers</span></a>
             </div>
           </div>
           {% endif %}
@@ -723,41 +723,41 @@
 
               <!-- start authenticated OWNER /START OUTER IF-->
               {% if user.role == 'admin' %}
-              <li><a href="/timeline">
+              <li><a href="./timeline">
                   <h6 class="text-center"><span class="navLink"><b>Timeline</b></span></h6>
                 </a></li>
-              <li><a href="/published-posts">
+              <li><a href="./published-posts">
                   <h6 class="text-center"><span class="navLink"><b>Posts</b></span></h6>
                 </a></li>
-              <li><a href="/videos">
+              <li><a href="./videos">
                   <h6 class="text-center"><span class="navLink"><b>Videos</b></span></h6>
                 </a></li>
-              <li><a href="/portfolio">
+              <li><a href="./portfolio">
                   <h6 class="text-center"><span class="navLink"><b>Portfolio</b></span></h6>
                 </a></li>
-              <li><a href="/about">
+              <li><a href="./about">
                   <h6 class="text-center"><span class="navLink"><b>About</b></span></h6>
                 </a></li>
               <!-- end authenticated OWNER -->
 
               <!-- start authenticated GUEST /OUTER ELSEIF-->
               {% elseif user.role == 'guest' %}
-              <li><a href="/">
+              <li><a href="./">
                   <h6 class="text-center"><span class="navLink"><b>Home</b></span></h6>
                 </a></li>
               {% if appsettings.ENABLE_VIDEOS_PAGE == 'true' %}
-              <li><a href="/videos">
+              <li><a href="./videos">
                   <h6 class="text-center"><span class="navLink"><b>Video</b></span></h6>
                 </a></li>
               {% endif %}
 
               {% if appsettings.ENABLE_PORTFOLIO_PAGE == 'true' %}
-              <li><a href="/portfolio">
+              <li><a href="./portfolio">
                   <h6 class="text-center"><span class="navLink"><b>Portfolio</b></span></h6>
                 </a></li>
               {% endif %}
 
-              <li><a href="/about">
+              <li><a href="./about">
                   <h6 class="text-center"><span class="navLink"><b>About</b></span></h6>
                 </a>
               </li>
@@ -765,20 +765,20 @@
 
               <!-- start GUEST that does not login /OUTER ELSE-->
               {% else %}
-              <li><a href="/">
+              <li><a href="./">
                   <h6 class="text-center"><span class="navLink"><b>Home</b></span></h6>
                 </a></li>
               {% if appsettings.ENABLE_VIDEOS_PAGE == 'true' %}
-              <li><a href="/videos">
+              <li><a href="./videos">
                   <h6 class="text-center"><span class="navLink"><b>Videos</b></span></h6>
                 </a></li>
               {% endif %}
               {% if appsettings.ENABLE_PORTFOLIO_PAGE == 'true' %}
-              <li><a href="/portfolio">
+              <li><a href="./portfolio">
                   <h6 class="text-center"><span class="navLink"><b>Portfolio</b></span></h6>
                 </a></li>
               {% endif %}
-              <li><a href="/about">
+              <li><a href="./about">
                   <h6 class="text-center"><span class="navLink"><b>About</b></span></h6>
                 </a></li>
               <ul class="list-unstyled CTAs d-flex justify-content-center">

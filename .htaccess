@@ -4,7 +4,7 @@
     </IfModule>
 
     RewriteEngine On
-    
+
     ## Begin - Exploits
     # If you experience problems on your site block out the operations listed below
     # This attempts to block the most common type of exploit `attempts` to Ziki
@@ -21,7 +21,7 @@
     RewriteRule .* index.php [F]
     #
     ## End - Exploits
-    
+
     ## Begin - Security
     # Block all direct access for these folders
     RewriteRule ^(\.git|src)/(.*) error [F]
@@ -49,4 +49,5 @@
 
     # internally rewrite the request to the index.php script
     RewriteRule ^(.*)$ %{ENV:BASE}index.php [QSA,L]
+    
 </IfModule>

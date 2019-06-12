@@ -22,12 +22,12 @@
     background: #ffffff;
     border-radius: 5px;
   }
-  
+
   .editor-btns {
   background: #280a66;
   border-radius: 5px;
   }
-  
+
   /*Tag styles*/
   .tags {padding-right: 10px;}
   .btn-outline-primary:not(:disabled):not(.disabled).active, .btn-outline-primary:not(:disabled):not(.disabled):active, .show>.btn-outline-primary.dropdown-toggle {
@@ -202,32 +202,32 @@
     .no-border {
       border: none;
     }
-  
+
     .modal-content {
       border-radius: 0.7rem;
     }
-  
+
     .modal-header .close {
       opacity: 1;
     }
-  
+
     .cancel-modal-text {
       font-size: 1.1rem;
       margin-bottom: 0;
       margin-top: 1.2rem;
     }
-  
+
     @media screen and (max-width: 767px) {
       .dialog-img {
         width: 170px;
       }
     }
-  
+
     @media screen and (min-width: 768px) {
       .modal-content {
         left: initial;
       }
-    } 
+    }
 </style>
 
 
@@ -260,14 +260,14 @@
                         <input type="text" id="new-post-title" value="{{post.title | striptags}}" class="form-control hide" placeholder="Title"/>
                         <input type="hidden" id="postid"  value="{{post.slug}}" class="form-control hide"/>
                       </div>
-                      
+
                       <div class="col-12">
                         <div id="editor">{{ post.body|raw }}</div>
                       </div>
-                      
+
                     </div>
                   </div>
-                  
+
                 </div>
                 <div class="row pt-5">
                   <div class="col-12">
@@ -342,7 +342,7 @@
                 </button>
               </div>
               <div class="modal-body no-border">
-                <img src="/resources/themes/ghost/assets/img/cancel-post-modal.png"
+                <img src="./resources/themes/ghost/assets/img/cancel-post-modal.png"
                   class="img-fluid mx-auto d-block dialog-img" alt="cancel post image" />
                 <p class="cancel-modal-text text-center font-weight-bold">
                   Do you want to delete this post?
@@ -372,7 +372,7 @@
           <div class="modal-body no-border">
             <div class="row">
               <div class="col-4">
-                  <img src="/resources/themes/ghost/assets/img/check.png"
+                  <img src="./resources/themes/ghost/assets/img/check.png"
                   class="img-fluid mx-auto d-block dialog-img" alt="cancel post image" width="130px">
               </div>
               <div class="col-8">
@@ -380,14 +380,14 @@
                   <p class="cancel-modal-text text-left font-weight-bold">Updated successfully!</p>
               </div>
             </div>
-            
-           
+
+
           </div>
         </div>
       </div>
     </div>
     <!-- modal ends here -->
-  
+
   <script>
     const title = document.querySelector("#new-post-title");
     const post = document.querySelector("#editor");
@@ -416,6 +416,6 @@
       {
         window.localStorage.removeItem('title');
       }
-    
+
   </script>
 {% endblock page_content %}

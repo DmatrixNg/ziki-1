@@ -24,13 +24,13 @@ class Auth {
     public static function sendMail($destination, $name, $address) {
          // Send success mail
          $mail = new PHPMailer;
-         $mail->isSMTP();                         
+         $mail->isSMTP();
          $mail->Host = "smtp.gmail.com";
-         $mail->SMTPAuth = true;     
-         $mail->Username = "zikihnginternssmtp@gmail.com";                 
+         $mail->SMTPAuth = true;
+         $mail->Username = "zikihnginternssmtp@gmail.com";
          $mail->Password = "zikiinterns";
          $mail->SMTPSecure = "tls";
-         $mail->Port = 587;                                   
+         $mail->Port = 587;
 
          $mail->From = "zikihnginternssmtp@gmail.com";
          $mail->FromName = "Lucid";
@@ -48,11 +48,11 @@ class Auth {
          $mail->Subject = "Welcome To Lucid";
          $mail->Body = $template;
 
-         if(!$mail->send()) 
+         if(!$mail->send())
          {
              return false;
-         } 
-         else 
+         }
+         else
          {
              return true;
          }
@@ -74,21 +74,21 @@ class Auth {
                 $doc = FileSystem::write("{$s_file}/auth.json", $save);
                 $destination = $data['email'];
                 $mail_check = self::sendMail($destination, $data['name'], $site_url);
-                
+
                 /*$url = "https://auth.techteel.com/api/login/email?address={$data['email']}?domain={$site_url}";
                 $ch = curl_init();
                 //Set the URL that you want to GET by using the CURLOPT_URL option.
                 curl_setopt($ch, CURLOPT_URL, $url);
-                
+
                 //Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                
+
                 //Set CURLOPT_FOLLOWLOCATION to true to follow redirects.
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                
+
                 //Execute the request.
                 $result = curl_exec($ch);
-                
+
                 //Close the cURL handle.
                 curl_close($ch);*/
                 return $mail_check;
@@ -112,16 +112,16 @@ class Auth {
         $ch = curl_init();
         //Set the URL that you want to GET by using the CURLOPT_URL option.
         curl_setopt($ch, CURLOPT_URL, "https://auth.techteel.com/api/encrpt?host={$data}");
-        
+
         //Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
+
         //Set CURLOPT_FOLLOWLOCATION to true to follow redirects.
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        
+
         //Execute the request.
         $result = curl_exec($ch);
-        
+
         //Close the cURL handle.
         curl_close($ch);
         return $result;
@@ -158,16 +158,16 @@ class Auth {
         $ch = curl_init();
         //Set the URL that you want to GET by using the CURLOPT_URL option.
         curl_setopt($ch, CURLOPT_URL, "https://auth.techteel.com/api/authcheck/{$provider}/{$token}");
-        
+
         //Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
+
         //Set CURLOPT_FOLLOWLOCATION to true to follow redirects.
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        
+
         //Execute the request.
         $result = curl_exec($ch);
-        
+
         //Close the cURL handle.
         curl_close($ch);
         $res = json_decode($result);
@@ -194,8 +194,8 @@ class Auth {
                 $auth =self::getAuth($res, $role);
                 $auth_response = $auth;
             }
-        }  
-        return $auth_response;  
+        }
+        return $auth_response;
     }
     public function redirect($location)
     {

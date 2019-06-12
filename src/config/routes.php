@@ -12,10 +12,14 @@ $user = file_get_contents("./src/config/auth.json");
 $user = json_decode($user, true);
 $username = str_replace(' ', '', $user['name']);
 $GLOBALS['username'] = $username;
-
+//$user = new Ziki\Core\Auth();
+//$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+//$host = $user->hash($url);
+//$GLOBALS['host'] = $host;
 Router::get('/', function ($request) {
     $user = new Ziki\Core\Auth();
     if ($user::isInstalled() == true) {
+    //  echo "here";
         return $user->redirect('/install');
     } else {
         $directory = "./storage/contents/";
@@ -151,7 +155,10 @@ Router::get('/timeline', function ($request) {
     $count = new Ziki\Core\Subscribe();
     $fcount = $count->fcount();
     $count = $count->count();
-    return $this->template->render('timeline.html', ['posts' => $post, 'count' => $count, 'fcount' => $fcount]);
+    $user = new Ziki\Core\Auth();
+    $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+    $host =  $_SERVER['REQUEST_URI'];
+    return $this->template->render('timeline.html', ['posts' => $post, 'count' => $count, 'host' => $host, 'fcount' => $fcount]);
 });
 
 Router::get($username, function ($request) {

@@ -20,12 +20,12 @@
       {% if feed.image %}
       <div class="row pt-4 pb-4">
         <div class="col-12 col-sm-3 col-md-3 col-lg-3">
-          <img src="{{feed.image | raw}}" alt="{{feed.title | raw}}" class="img-fluid post-image" />
+          <img src=".{{feed.image | raw}}" alt="{{feed.title | raw}}" class="img-fluid post-image" />
         </div>
         <div class="col-12 col-sm-9 col-md-9 col-lg-9">
           <div class="second">
             <h6 class="purple"><b>{{feed.date | raw}}</b></h6>
-            <a href="{{feed.link}}">
+            <a href=".{{feed.link}}">
               <h3><b>{{feed.title | raw}}</b></h3>
             </a>
             <p>{{feed.desc | raw}}</p>
@@ -38,10 +38,10 @@
         <div class="col-12 col-sm-12 col-md-12 col-lg-12">
           <div class="second">
             <h6 class="purple"><b>{{feed.date | raw}}</b></h6>
-            <a href="{{feed.link}}">
+            <a href=".{{feed.link}}">
               <h3><b>{{feed.title | raw}}</b></h3>
             </a>
-          <a href="{{feed.link}}"> <p>{{feed.desc | raw}}</p></a>
+          <a href=".{{feed.link}}"> <p>{{feed.desc | raw}}</p></a>
           </div>
         </div>
       </div>
@@ -51,7 +51,7 @@
       <div class="row">
         <div class="no-post-alert mx-auto my-4">
           <p class="text-grey">
-            You have no published posts yet. Click <a href="/timeline" style="color:#280A66;"><span
+            You have no published posts yet. Click <a href="./timeline" style="color:#280A66;"><span
                 class="badge badge-info">here</span></a> to start publishing.
           </p>
         </div>

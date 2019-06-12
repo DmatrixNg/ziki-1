@@ -303,7 +303,7 @@
   <div class="row">
     <div class=" col-12 text-right">
       <button class="my-4 view-draft-btn">
-        <a class="text-white" href="/drafts">my drafts</a>
+        <a class="text-white" href="./drafts">my drafts</a>
       </button>
     </div>
 
@@ -323,12 +323,12 @@
 
               <div class="published-post-date">{{ post.date }}</div>
               <h6 class="published-post-title">
-                <a href="/post/{{post.post_id}}/{{ post.post_title |lower }}">{{ post.title|raw  }}</a>
+                <a href="./post/{{post.post_id}}/{{ post.post_title |lower }}">{{ post.title|raw  }}</a>
               </h6>
               <div class="published-post-content">
                 <p>
                   {{ post.body|striptags|raw  }}
-                  <span> <a href="/post/{{post.post_id}}/{{ post.post_title |lower }}" class="read-more">Read More</a>
+                  <span> <a href="./post/{{post.post_id}}/{{ post.post_title |lower }}" class="read-more">Read More</a>
                   </span>
                 </p>
               </div>
@@ -345,7 +345,7 @@
                   <button class="dropdown-item" data-toggle="modal" data-target="#editModal">Edit
                       Post</button>
                       <!-- the edit post modal here -->
-                <!-- <button class="dropdown-item"> <a href="/editor/{{post.post_id}}/{{ post.post_title |lower }}"
+                <!-- <button class="dropdown-item"> <a href="./editor/{{post.post_id}}/{{ post.post_title |lower }}"
                     class="edit-post">Edit
                     Post</a></button> -->
                   <button class="dropdown-item" id="{{ post.slug |lower }}" onclick="deletePost(this)"
@@ -362,12 +362,12 @@
 
               <div class="published-post-date">{{ post.date }}</div>
               <h6 class="published-post-title">
-                <a href="/post/{{post.post_id}}/{{ post.post_title |lower }}">{{ post.title |raw }}</a>
+                <a href="./post/{{post.post_id}}/{{ post.post_title |lower }}">{{ post.title |raw }}</a>
               </h6>
               <div class="published-post-content">
                 <p>
                   {{ post.body|striptags|raw  }}
-                  <span> <a href="/post/{{post.post_id}}/{{ post.post_title |lower }}" class="read-more">Read More</a>
+                  <span> <a href="./post/{{post.post_id}}/{{ post.post_title |lower }}" class="read-more">Read More</a>
                   </span>
                 </p>
               </div>
@@ -384,7 +384,7 @@
                     <button class="dropdown-item" data-toggle="modal" data-target="#editModal">Edit
                         Post</button>
                         <!-- the edit post modal here -->
-                  <!-- <button class="dropdown-item"> <a href="/editor/{{post.post_id}}/{{ post.post_title |lower }}"
+                  <!-- <button class="dropdown-item"> <a href="./editor/{{post.post_id}}/{{ post.post_title |lower }}"
                       class="edit-post">Edit
                       Post</a></button> -->
                   <button class="dropdown-item" data-toggle="modal" id="{{ post.slug |lower }}"
@@ -399,7 +399,7 @@
           <div class="row">
             <div class="no-post-alert mx-auto my-4">
               <p class="text-grey">
-                You have no published posts yet. Click <a href="/timeline" style="color:#280A66;">here</a> to start
+                You have no published posts yet. Click <a href="./timeline" style="color:#280A66;">here</a> to start
                 publishing.
               </p>
             </div>

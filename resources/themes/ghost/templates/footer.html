@@ -3,7 +3,7 @@
     <div class="row footer">
       <div class="col-12 flex-row text-center">
         Powered by
-        <img class="img-fluid footer-logo" src="/resources/themes/ghost/assets/img/lucid.png">
+        <img class="img-fluid footer-logo" src="./resources/themes/ghost/assets/img/lucid.png">
       </div>
     </div>
   </div>
@@ -44,8 +44,8 @@
       $('#sidebar-collapse-2').toggleClass('visible fas fa-arrow-circle-right fa-2x');
     });
   });
-  // Code for editor switching.... 
-  //added the below code just to know what page the user is in 
+  // Code for editor switching....
+  //added the below code just to know what page the user is in
   //code kinda stupid tho
   $(document).ready(function () {
     window.localStorage.setItem('page',"{{ title | default('Ziki')}}");
@@ -68,7 +68,7 @@
     placeholder: 'Compose an epic...'
   });
   $(".ql-toolbar").css("display", "none");
-  var content_id = 'editor';  
+  var content_id = 'editor';
 
   max = 50;
   //binding keyup/down events on the contenteditable div
@@ -76,11 +76,11 @@
   $('#'+content_id).keydown(function(e){ check_charcount(content_id, max, e); });
 
   function check_charcount(content_id, max, e)
-  {  
-   
+  {
+
     if($('#'+content_id).text().length > max)
     {
-  
+
       //$('#new-post-title').addClass('form-control show');
       document.getElementById('new-post-title').setAttribute('class','form-control show')
       document.getElementById("num_char").innerHTML = "Full Blog Mode";
@@ -90,7 +90,7 @@
       //$('#new-post-title').removeClass('form-control show');
       document.getElementById('new-post-title').classList.remove("form-control show");
       document.getElementById("num_char").innerHTML = "Micro-blog Mode";
-      
+
     }
   }
 
@@ -107,12 +107,12 @@
         //$('#new-post-title').addClass('form-control show');
         document.getElementById('new-post-title').setAttribute('class','form-control show')
       }
-     
+
     }
   }
-  
+
   // to toggle between active and inactive sidebar nav links -----------------------
-  /*NB this is not want we wnat but after delebration, we will get a solution for it.. 
+  /*NB this is not want we wnat but after delebration, we will get a solution for it..
   We have to find a way to keep the active class on the active navItem even on refresh
   The best way i think is to detect the current URL*/
 
@@ -200,7 +200,7 @@
 <!-- convert to markdown script ends -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
-  
+
   // added by sleekX
   var form = document.querySelector('.timeline-editor');
 
@@ -215,12 +215,12 @@
     let currentPage = window.localStorage.getItem('page');
     const formData = new FormData(document.querySelector('#editor-form'));
     const blogBody = document.querySelector('.ql-editor').innerHTML;
-    
-   
-      
-    
+
+
+
+
     const title = document.querySelector("#new-post-title").value;
-    
+
     if(title != ""){
       formData.set('title', title);
     }
@@ -230,7 +230,7 @@
       const postid = document.querySelector("#postid").value;
       formData.set('postId', postid);
     }
-    
+
     // convert to markdown
     const turndownService = new TurndownService({ codeBlockStyle: 'fenced' });
     const gfm = turndownPluginGfm.gfm;
@@ -281,7 +281,7 @@
     formData.set('tags', selectedTags);
 
     // send the form data
-    
+
     if(currentPage == 'Edit Post')
     {
       fetch(newPostIsBeingCreated ? '/edit-post' : '/saveDraft', {
@@ -292,17 +292,17 @@
 
         if(res.error == false && res.action == 'update')
         {
-          
+
           swal("Good job!", "You posts was successfully updated.", "success");
         }
-        
+
       }).catch((err) => {
         alert(`Failed with the following message: ${err.message}`);
       });
     }
     else
     {
-      fetch(newPostIsBeingCreated ? '/publish' : '/saveDraft', {
+      fetch(newPostIsBeingCreated ? './publish' : './saveDraft', {
       method: 'POST',
       body: formData
       }).then(res => res.json()).then((res) => {
@@ -311,20 +311,20 @@
         if(res.error == false && res.action == 'publish')
         {
           window.localStorage.setItem('publish','success');
-          window.location = '/timeline';
-          
+          window.location = './timeline';
+
         }
         else if(res.error == false && res.action == 'savedToDrafts')
         {
           window.localStorage.setItem('savedToDrafts','success');
-          window.location = '/timeline';
+          window.location = './timeline';
         }
 
       }).catch((err) => {
         alert(`Failed with the following message: ${err.message}`);
       });
     }
-    
+
   }
   else{
     swal({
@@ -384,7 +384,7 @@
         {
           window.localStorage.setItem('aboutsaved','success');
           window.location = '/about';
-          
+
         }
         else if(res.error == true)
         {
@@ -522,6 +522,6 @@
   </div>
 </footer>
 <!-- alert -->
-<script src="/resources/themes/ghost/assets/js/toast.js"></script>
+<script src="./resources/themes/ghost/assets/js/toast.js"></script>
 
 </html>

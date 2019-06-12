@@ -307,7 +307,7 @@
             </div>
           </div>
           <!-- <div class="row pt-2">
-            
+
           </div> -->
         </form>
       </div>
@@ -328,7 +328,7 @@
                 <div class="row second">
                   <div class="col-12">
                     <h6 class="purple"><b>{{feed.date | raw}}</b></h6>
-                    <a href="{{feed.link}}">
+                    <a href=".{{feed.link}}">
                         <h3><b>{{feed.title | raw}}</b></h3>
                     </a>
                     {% if feed.image %}
@@ -342,7 +342,7 @@
                 </div>
                 <div class="row">
                   <div class="col-6">{{feed.site | raw}}</div>
-                  <a class="col-6 text-right" href="{{feed.link}}"><div>Comment</div></a>
+                  <a class="col-6 text-right" href=".{{feed.link}}"><div>Comment</div></a>
                 </div>
               </div>
             </div>
