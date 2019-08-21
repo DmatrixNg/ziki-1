@@ -268,13 +268,13 @@ $location = 'timeline';
           <img src="{{ $feeds['site_image']}}" class="img-fluid img-thumb" alt="user" />
           @endif
           <div class="post-content-body">
-            <a href="{{$feeds['link']}}" class="no-decoration">
+            <a href="{{URL::to('/')}}/{{$feeds['link']}}" class="no-decoration">
               <h5 class="font-weight-bold">{{$feeds['title']}}</h5>
             </a>
             <p class="">
               {{$feeds['des']}}
             </p>
-            <p class="">{{$feeds['site']}} -<small class="text-muted">{{$feeds['date']}} </small></p>
+            <p class=""><a href="{{$feeds['site']}}">{{$feeds['site']}}</a> -<small class="text-muted">{{$feeds['date']}} </small></p>
           </div>
         </div>
         @endforeach

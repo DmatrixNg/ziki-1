@@ -113,7 +113,7 @@ let j = jQuery.noConflict();
             contentType: false,
             processData: false,
             success : function (res) {
-              //console.log(JSON.stringify(res));
+              console.log(JSON.stringify(res));
 
                 if (res.error == false && res.action == 'publish') {
                   window.localStorage.setItem('publish', 'success');

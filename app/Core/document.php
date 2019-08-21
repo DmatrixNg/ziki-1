@@ -832,6 +832,7 @@ $user = Auth::user();
             return $delete;
         }
     }
+    
     //deleteapOST by ProblemSolved;
     public function deletePost($post)
     {
