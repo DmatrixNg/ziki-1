@@ -176,7 +176,7 @@ class HomeController extends Controller
     public function publish(Request $request,$username) {
 
         $title = isset($request->title) ? $request->title : '';
-        $body = $request->postVal;
+        $content = $request->postVal;
         $tags = $request->tags;
 
 
@@ -190,11 +190,53 @@ class HomeController extends Controller
             $images[$newKey] = $value;
         }
 
-        $extra = "";
-        $app = new \Lucid\Core\Document($username);
-        $result = $app->create($title, $body, $tags, $images, $extra, $postType="full-blog");
-        return json_encode($result);
+        $createPost = $this->create($title, $content, $tags, $images,$username);
+        
+        if($createPost){
+          return response()->json(["error" => false, "action"=>"publish", "message" => "Post published successfully"],200);
+        }else{
+          return response()->json(["error" => true, "action"=>"publish", "message" => "Fail while publishing, please try again"]);
+        }
     }
+
+
+    public function create($title,$content, $tags, $image,$username){
+
+        if (!empty($image)) {
+          $url = $username."/images/";
+          if(is_array($image)) {
+              foreach ($image as $key => $value) {
+
+                  $decoded = base64_decode($image[$key]);
+
+                  $img_path = 'public/'.$username."/images/".$key;
+                  Storage::disk('local')->put( $img_path, $decoded);
+                  
+              }
+          } 
+      }
+
+      $slug = str_replace(' ', '-', $title);
+
+      $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+
+      $insertPosts = DB::table('posts')->insert([
+        'user_id'=>Auth::user()->id,
+        'title'=>$title,
+        'content'=>$content,
+        'tags'=>$tags,
+        'slug'=>strtolower($slug)
+      ]);
+
+      if ($insertPosts) {
+        $result = array("error" => false, "action"=>"publish", "message" => "Post published successfully");
+        return true;
+    } else {
+        $result = array("error" => true, "action"=>"publish", "message" => "Fail while publishing, please try again");
+        return false;
+    }
+
+  }
 
     public function settings(){
       $user = Auth::user();
@@ -334,6 +376,10 @@ class HomeController extends Controller
         }
       }
 
+    }
+
+    public function deletePost($username,$id){
+      return response()->json(['id'=>$id,'username'=>$username],200);
     }
 
 }

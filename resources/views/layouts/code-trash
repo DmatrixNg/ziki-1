@@ -360,3 +360,52 @@
 
       // console.log(formData.get('tags'));
       // formData.set('tags', selectedTags);
+
+  <!-- <p>Write a Post</p>
+<form method="POST" action="/save-post" enctype="multipart/form-data" class="mb-3">
+    @csrf
+  <div class="form-row mb-3">
+    <div class="col-7">
+      <input type="text" name="title" class="form-control" placeholder="Title">
+    </div>
+    <div class="col-4 offset-md-1 border-dark ">
+      <input type="file" name="file" class="" id="customFile" style="display:none">
+      <label class="text-muted form-control p-2 w-100" for="customFile"><i class="icon ion-md-add p-1"></i> Add post Image</label>
+    </div>
+  </div>
+  <div class="form-group">
+    <textarea type="text" name="body" class="form-control h-25" placeholder="Tell your story"></textarea>
+  </div>
+  <div class="text-right">
+    <button type="submit" class="btn bg-alt text-white">Publish</button>
+  </div>
+</form> -->
+
+
+function deletePost(id){
+  const deleteForm = document.querySelector('.delete-form');
+  const deleteBtn = document.querySelector('button[name="delete"]');
+  if(deleteBtn !=null){
+    deleteForm.onsubmit = deleteBtn.addEventListener('click',function(e){
+      e.preventDefault();
+
+      j.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+      j.ajax({
+          type:'GET',
+          url:"{{ route('deletePost',['username'=>'ssfd','id'=>"+ j{id} +"])  }}",
+          contentType:false,
+          processData:false,
+          success:function(data){
+            console.log(data);
+          }
+      })
+
+
+    });
+  }
+}

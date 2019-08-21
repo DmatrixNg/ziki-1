@@ -317,7 +317,7 @@ $location= 'post';
 <div class="post-content">
   @if($post['image'] !== '')
   <div class="post-image d-none d-lg-flex d-xl-flex d-md-flex">
-    <img src="{{asset('storage')}}/{{$post['image']}}" class="img-fluid post-img" alt="What I think of Donald Glover’s New Video" />
+    <img src="{{$post['image']}}" class="img-fluid post-img" alt="What I think of Donald Glover’s New Video" />
   </div>
   @endif
   <div class="post-content-body">
@@ -326,19 +326,52 @@ $location= 'post';
       <a class="no-decoration text-dark" href="post/{{$post['slug']}}">{!! $post['title'] !!}</a>
     </h3>
     <p class="post-body">
-
       @php
       echo strip_tags($post['body'])
       @endphp
     </p>
     <div>
       <a href="" class="mr-2 text-dark" data-toggle="modal" data-target="#editModal"><i class="icon ion-md-create" style="font-size: 1.5em"></i></a>
-      <a href="" class="text-dark" data-toggle="modal" data-target="#deleteModal"><i class="icon ion-md-trash" style="font-size: 1.5em"></i></a>
+      <a href="" class="text-dark" onclick="deletePost({{$post['id']}})" data-toggle="modal" data-target="#deleteModal"><i class="icon ion-md-trash" style="font-size: 1.5em"></i></a>
     </div>
   </div>
 
-  <!-- Edit Modal -->
-  <div class="modal fade text-center" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
+  
+</div>
+
+
+
+
+<div class="text-center">
+  <!--   <button class="btn btn-primary pagination">
+    Previous articles <i class="pl-2 icon ion-ios-arrow-forward"></i>
+  </button> -->
+</div>
+
+
+@empty
+
+<div class="post-content">
+  <div class="post-content-body">
+    no posts yet
+  </div>
+</div>
+
+@endforelse
+
+<!--
+<form>
+  <div class="row">
+    <div class="col-12">
+
+    </div>
+  </div>
+</form> 
+-->
+
+
+<!-- Edit Modal -->
+<div class="modal fade text-center" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-body">
@@ -346,15 +379,11 @@ $location= 'post';
             @csrf
             <div class="form-group">
               <label class="sr-only">Title</label>
-              <input type="text" class="form-control" value="@php
-      echo strip_tags($post['title'])
-      @endphp" />
+              <input type="text" class="form-control" value="Placeholder" />
             </div>
             <div class="form-group">
               <label class="sr-only">Text</label>
-              <input type="text" class="form-control" name="body" value="@php
-      echo strip_tags($post['body'])
-      @endphp">
+              <input type="text" class="form-control" name="body" value="Placeholder">
             </div>
             <div class="row form-row flex-row-reverse">
               <div class="col-3 col-sm-3 col-md-2">
@@ -379,9 +408,9 @@ $location= 'post';
           <div>
             <h4 class="text-main mb-0"> Are you sure you want to delete this post?</h4>
             <small class="text-muted mt-0"><em>This action is irreversible</em></small>
-            <form method="POST" action="" class="mt-3">
+            <form method="get" action="" class="mt-3 delete-form">
               @csrf
-              <button type="submit" class="btn btn-danger">Delete</button>
+              <button type="submit" class="btn btn-danger" name="delete">Delete</button>
             </form>
           </div>
         </div>
@@ -389,35 +418,6 @@ $location= 'post';
     </div>
   </div>
   <!-- End Delete Modal  -->
-</div>
-
-
-
-
-<div class="text-center">
-  <!--   <button class="btn btn-primary pagination">
-    Previous articles <i class="pl-2 icon ion-ios-arrow-forward"></i>
-  </button> -->
-</div>
-
-
-@empty
-
-<div class="post-content">
-  <div class="post-content-body">
-    no posts yet
-  </div>
-</div>
-
-@endforelse
-
-<form>
-  <div class="row">
-    <div class="col-12">
-
-    </div>
-  </div>
-</form>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdn.quilljs.com/1.3.4/quill.js"></script>
@@ -431,5 +431,9 @@ $location= 'post';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/bootstrap-tokenfield.min.js"></script>
 <script src="{{ asset('js/posts.js') }}" type="text/javascript"></script>
+
+<script>
+    
+</script>
 
 @endsection
