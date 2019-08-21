@@ -106,7 +106,7 @@ class Document
             $dir = $file .'/content/micro-blog-posts/'. $unix . ".md";
         }
 
-        
+
 
 
         //return $dir; die();
@@ -397,11 +397,11 @@ public function checker()
             }
 
                   krsort($feed);
-              //  dd($feed);
                 //  print_r($feed);
                   foreach ($feed as $key => $value) {
 
-                  if (extfeeds::where('title', $value["title"])->orWhere('link',$value['link'])->doesntExist()== 1) {
+                //      dd(extfeeds::Where('link',$value['link'])->Where('site', "=", $value['title'])->doesntExist());
+                  if (extfeeds::Where('link',$value['link'])->Where('site', "=", $value['title'])->doesntExist()== 1) {
                     $feedId[]  = DB::table('extfeeds')->insert([
                         'user_id'          =>$value['user_id'],
                         'site'             => $value['site'],
@@ -422,7 +422,14 @@ public function checker()
                   return false;
               }
           }
-
+public function cleaner()
+{
+  $user= DB::table('users')->where('username', $this->file)->first();
+  if (extfeeds::Where('user_id', '=', $user->id)->Where('site', "!=", $user->name)->exists()== 1) {
+  return extfeeds::Where('user_id', '=', $user->id)->Where('site', "!=", $user->name)->delete();
+  }
+  $this->fetchAllRss();
+}
     //RSS designed By DMAtrix;
     public function fetchRss()
     {
@@ -471,18 +478,20 @@ public function checker()
     public function createRSS()
     {
       //  $user = file_get_contents("./src/config/auth.json");
-        //$user = json_decode($user, true);
-$user = Auth::user();
+//$user = Auth::user();
+$user= DB::table('users')->where('username', $this->file)->first();
+//$user = json_decode($user, true);
+//dd($user->name);
           date_default_timezone_set("Africa/Lagos");
         $Feed = new RSS2;
         // Setting some basic channel elements. These three elements are mandatory.
-        $Feed->setTitle($user['name']);
+        $Feed->setTitle($user->name);
         $Feed->setLink(storage_path('app/'.$this->file.'./rss/rss.xml'));
         $Feed->setDescription("");
 
         // Image title and link must match with the 'title' and 'link' channel elements for RSS 2.0,
         // which were set above.
-        $Feed->setImage($user['name'], '', $user['image']);
+        $Feed->setImage($user->name, '', $user->image);
 
         $Feed->setChannelElement('language', 'en-US');
         $Feed->setDate(date(DATE_RSS, time()));
@@ -525,9 +534,9 @@ $user = Auth::user();
                 $newItem->setDescription(substr(strip_tags($bd), 0, 100));
                 $newItem->setDate(date(\DateTime::RSS, strtotime($yaml['timestamp'])));
 
-                $newItem->setAuthor($user['name'], $user['email']);
+                $newItem->setAuthor($user->name, $user->email);
                 $newItem->setId($url, true);
-                $newItem->addElement('source', $user['name'] . '\'s page');
+                $newItem->addElement('source', $user->name . '\'s page');
 
                 $newItem->addElement('image', $image);
 

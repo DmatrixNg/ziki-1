@@ -10,6 +10,7 @@ class pageController extends Controller
 {
     public function user($username) {
         $user_exists = DB::table('users')->where('name',$username)->orWhere('username',$username)->get();
+      //  dd($user_exists);
         if(!isset($user_exists[0])) {
             return false;
         }
@@ -22,7 +23,6 @@ class pageController extends Controller
             return abort(404);
         }
         $user = $this->user($username);
-
         if(Auth::user() && Auth::user()->username == $username){
                 $user = Auth::user();
                 $username = $user->username;
