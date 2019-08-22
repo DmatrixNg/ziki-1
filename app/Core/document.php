@@ -141,10 +141,12 @@ class Document
                   $decoded = base64_decode($image[$key]);
 
                   $img_path = 'public/'.$username."/images/".$key;
-                  Storage::disk('local')->put( $img_path, $decoded);
+                $image = Storage::disk('local')->put( $img_path, $decoded);
 
               }
           }
+      }else {
+        $image = null;
       }
 
       $slug = str_replace(' ', '-', $title);
@@ -156,6 +158,7 @@ class Document
         'title'=>$title,
         'content'=>$content,
         'tags'=>$tags,
+        'image'=> $image,
         'slug'=>strtolower($slug)
       ]);
 
@@ -235,23 +238,26 @@ class Document
             $this->array_sort_by_column($posts,'created_at');
 
             foreach ($posts as $key => $value) {
-
+              $title = strip_tags($value['title']);
               $slug = str_replace(' ', '-', $title);
-
               $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
               $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
+
               $insertPosts = DB::table('posts')->insert([
                 'user_id'=>Auth::user()->id,
-                'title'=>$title,
-                'content'=>$content,
-                'tags'=>$tags,
+                'title'=>  $title,
+                'content'=> $value['body'],
+                'tags'=>$value['tags'],
+                'image'=> $value['image'],
                 'slug'=>strtolower($slug)
               ]);
 
-            }
 
             };
-            return $posts;
+          Storage::deleteDirectory($this->user.'/content/'.$postTypeSubDir.'/');
+          //  storage_path('app/'.$this->user.'/content/'.$postTypeSubDir.'/')
+      //      dd($insertPosts);
+            return true;
         } else {
             return [];
         }
@@ -457,6 +463,7 @@ public function checker()
 
             */
             $feed = $this->getPosts($this->user);
+            $this->postFixer("posts");
                   krsort($feed);
                 //  print_r($feed);
                 $user= DB::table('users')->where('username', $this->user)->first();

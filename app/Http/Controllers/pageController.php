@@ -60,7 +60,7 @@ class pageController extends Controller
 
             $app = new \Lucid\Core\Document($username);
             $feed =$app->Feeds();
-
+          //  dd(  $feed);
             // follower and following Count
             $sub = new \Lucid\Core\Subscribe($username);
             $fcount =$sub->myfollowercount();
@@ -89,9 +89,9 @@ class pageController extends Controller
             //  $follower = $app->subscription();
                //dd($follower);
 
-              $userposts=$this->getPosts($username);
+          //    $userposts=$this->getPosts($username);
 
-              return view('home', ['posts' => $feed,'user'=>$user,'fcheck' => $fcheck,'fcount'=>$fcount, 'count' => $count,"userposts"=>$userposts]);
+              return view('home', ['posts' => $feed,'user'=>$user,'fcheck' => $fcheck,'fcount'=>$fcount, 'count' => $count]);
 
         }
 
@@ -174,8 +174,8 @@ class pageController extends Controller
             $user = $this->user($username);
             $app  = new \Lucid\Core\Document($username);
             $posts=$app->fetchAllRss();
-            $posts= $app->postFixer("posts");
-            dd($posts);
+
+            //dd($posts);
             // follower and following Count
             $sub = new \Lucid\Core\Subscribe($username);
             $fcount =$sub->myfollowercount();
