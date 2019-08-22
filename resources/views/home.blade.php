@@ -19,7 +19,7 @@ $location= 'home';
 
 <!-- End of Post Content -->
 
-{{--@foreach ($posts as $feeds)
+@foreach ($posts as $feeds)
 @if (empty($feeds['image']))
 
 <div class="post-content">
@@ -30,7 +30,7 @@ $location= 'home';
         {{$feeds['title']}}
       </h3>
       <p class="post-body">
-        {{$feeds['desc']}}
+        {{$feeds['des']}}
       </p>
     </div>
   </a>
@@ -47,16 +47,16 @@ $location= 'home';
         {{$feeds['title']}}
       </h3>
       <p class="post-body">
-        {{$feeds['desc']}}
+        {{$feeds['des']}}
       </p>
     </div>
   </a>
 </div>
 @endif
-@endforeach--}}
+@endforeach
 
 
-@foreach($userposts as $userpost)
+{{--@foreach($userposts as $userpost)
 
 @if($userpost['image'] !== '')
 
@@ -102,11 +102,11 @@ $location= 'home';
 
 @endif
 
-@endforeach
+@endforeach--}}
 
 
 @php
- if(count($userposts) > 30) {
+ if(count($posts) > 30) {
 @endphp
   <div class="text-center">
     <button class="btn btn-primary pagination">

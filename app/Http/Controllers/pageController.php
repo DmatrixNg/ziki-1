@@ -12,6 +12,7 @@ class pageController extends Controller
 {
     public function user($username) {
         $user_exists = DB::table('users')->where('name',$username)->orWhere('username',$username)->get();
+      //  dd($user_exists);
         if(!isset($user_exists[0])) {
             return false;
         }
@@ -24,7 +25,6 @@ class pageController extends Controller
             return abort(404);
         }
         $user = $this->user($username);
-
         if(Auth::user() && Auth::user()->username == $username){
                 $user = Auth::user();
                 $username = $user->username;
@@ -60,7 +60,7 @@ class pageController extends Controller
 
             $app = new \Lucid\Core\Document($username);
             $feed =$app->Feeds();
-
+          //  dd(  $feed);
             // follower and following Count
             $sub = new \Lucid\Core\Subscribe($username);
             $fcount =$sub->myfollowercount();
@@ -89,41 +89,25 @@ class pageController extends Controller
             //  $follower = $app->subscription();
                //dd($follower);
 
-              $userposts=$this->getPosts($username);
+          //    $userposts=$this->getPosts($username);
 
-              return view('home', ['posts' => $feed,'user'=>$user,'fcheck' => $fcheck,'fcount'=>$fcount, 'count' => $count,"userposts"=>$userposts]);
+              return view('home', ['posts' => $feed,'user'=>$user,'fcheck' => $fcheck,'fcount'=>$fcount, 'count' => $count]);
 
         }
 
 
     }
 
-    public function getPost($username,$id){
-      $user = $this->user($username);
-      $post = DB::table('posts')->where(['id'=>$id,'user_id'=>$user->id])->first();  
-      if(!empty($post)) {
-        $parsedown  = new Parsedown();
-        $createdAt = Carbon::parse($post->created_at);
-        $content['tags'] = $post->tags;
-        $content['id'] = $post->id;
-        $content['title'] =$post->title;
-        $content['body'] = $parsedown->text($post->content);
-        $content['date'] = $createdAt->format('l jS \\of F Y h:i A');
-        $content['slug'] = $this->clean($post->slug);
 
-        return $content;
-      }
-      
-    }
-
-    public function singlePostPage($username,$postTitle,$id){
+    public function singlePostPage($username,$postSlug){
         if(!$this->user($username)) {
             return abort(404);
         }
         $user = $this->user($username);
         $app  = new \Lucid\Core\Document($username);
-        $id = base64_decode($id);
-        $post=$this->getPost($username,$id);
+      //  $id = base64_decode($id);
+
+        $post=$app->getPost($username,$postSlug);
 
         if(!$post){
             return redirect('/'.$username.'/home');
@@ -158,37 +142,6 @@ class pageController extends Controller
         return view('single-blog-post',compact('post','user'),['fcheck' => $fcheck, 'fcount'=>$fcount, 'count' => $count ]);
     }
 
-    public function getPosts($username){
-      $user =  $this->user($username);;
-      $posts = DB::table('posts')->where('user_id',$user->id)->get();
-      if(!empty($posts)) {
-        $allPost = [];
-        foreach($posts as $post){
-          $parsedown  = new Parsedown();
-          $postContent = $parsedown->text($post->content);
-          preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
-          $first_img = "";
-          if (isset($matches[1])) {
-              // there are images
-              $first_img = $matches[1];
-              // strip all images from the text
-              $postContent = preg_replace("/<img[^>]+\>/i", " ", $postContent);
-          }
-          $createdAt = Carbon::parse($post->created_at);
-          $content['title'] = $post->title;
-          $content['body']  = $this->trim_words($postContent, 200);
-          $content['tags']  = $post->tags;
-          $content['slug']  = $this->clean($post->slug).'/'.base64_encode($post->id);
-          $content['image'] = $first_img;
-          $content['date']  =  $createdAt->format('l jS \\of F Y h:i A');;
-          $content['id'] = $post->id;
-          array_push($allPost,$content);
-        }
-        return $allPost;
-
-      }
-
-    }
 
 
     public function clean($string) {
@@ -211,7 +164,7 @@ class pageController extends Controller
     }
 
     public function posts($username){
-      
+
             if(Auth::user() && $username == Auth::user()->username){
 
             if(!$this->user($username)) {
@@ -220,7 +173,9 @@ class pageController extends Controller
 
             $user = $this->user($username);
             $app  = new \Lucid\Core\Document($username);
-            $posts=$this->getPosts($username);
+            $posts=$app->fetchAllRss();
+
+            //dd($posts);
             // follower and following Count
             $sub = new \Lucid\Core\Subscribe($username);
             $fcount =$sub->myfollowercount();
@@ -464,7 +419,7 @@ class pageController extends Controller
 
 
   public function comments($username, $post_id) {
-    
+
     $comments = DB::table('comments')
                 ->join('users','comments.user_id','=','users.id')
                 ->select('comments.*','users.username','users.email','users.image')
@@ -473,7 +428,7 @@ class pageController extends Controller
                 ->get();
     $carbon =  new Carbon;
     return view('comments')->with(['comments'=>$comments,'carbon'=>$carbon]);
-    
+
   }
 
 }
