@@ -1,4 +1,5 @@
 let j = jQuery.noConflict();
+
   var toolbarOptions = [
     ['bold', 'italic'],
     ['blockquote'],
@@ -73,6 +74,8 @@ let j = jQuery.noConflict();
           const id = Math.random().toString(36).substr(2, 10);
           const newImgName = `img-${id}.${ext}`;
           const username = j('meta[name="username"]').attr('content');
+          
+ 
 
 
           // replace the image URI everywhere it occurs in the markdown

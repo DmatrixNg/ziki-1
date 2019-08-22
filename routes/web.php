@@ -36,6 +36,8 @@ Route::get('subscribe', function () {
 
 
 
+
+
 Route::get('under-construction', 'pageController@construction')->name('under-construction');
 Route::get('microblog','HomeController@microblog');
 Route::post('save-post','HomeController@savePost');
