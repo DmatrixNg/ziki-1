@@ -15,6 +15,19 @@ $location= 'singlePost';
 @endsection
 @section('content')
 <!-- Beginning of Post Content -->
+<style>
+.standard-color{
+  background: #871e99;
+  color:#fff;
+  border:1px solid #871e99;
+}
+
+.standard-color:hover{
+  background: #871e99 !important;
+  color:#fff;
+  border:1px solid #871e99 !important;
+}
+</style>
 <div class="post-content">
     <div class="post-content-body">
         <p class="post-date">
@@ -34,83 +47,109 @@ $location= 'singlePost';
 </div>
 <div class="">
     <p>Write a comment</p>
-    <form method="POST" action="" autocomplete="off" enctype="multipart/form-data" class="mb-3">
+    <form method="post" action="" autocomplete="off" enctype="multipart/form-data" class="mb-3 commentForm">
         @csrf
         <div class="form-group">
+            <input type="hidden" name="post_id" value="{{ $post['id']  }}">
             <textarea type="text" name="body" class="form-control h-25" placeholder=""></textarea>
-            @if($errors->has('body'))
-            <span class="text-danger">Fill out this field to make a comment </span>
-            @endif
+            <span class="text-danger" style="display:none;"> Fill out this field to make a comment </span>
+            
         </div>
         <div class="text-right">
-            <button type="submit" class="btn bg-alt text-white">Publish</button>
+        @auth
+            <button type="submit" name="comment" class="btn bg-alt text-white">Comment</button>
+        @endauth
+        @guest
+         <button type="button" name="loginpopup" id="loginpopup" class="btn bg-alt text-white">Comment</button>
+        @endguest
         </div>
     </form>
 </div>
 <div class="">
     <h6 class="font-weight-bold">Comments: </h6>
-    <!--     <div class="post-content">
-        <div>
-
-        </div>
-        <div class="post-content-body">
-            <p class="mb-1 font-weight-bold">Lucid-<small class="text-muted">August 22, 2019</small></p>
-            <p class="">
-                This is a well written article. Interesting and illuminating read. I will be looking forward to more of your work
-            </p>
-        </div>
-    </div> -->
-    <div class="post-content">
-        <img src="{{ asset('img/mb-1.png') }}" class="img-fluid" alt="user" />
-        <div class="post-content-body">
-            <p class="">
-                Kubernetes is the 800-pound gorilla of container orchestration. It powers some of the biggest deployments worldwide, but it comes with a price tag
-            </p>
-            <p class="">Tyler Elliot -<small class="text-muted">March 28, 2019 </small></p>
-        </div>
-    </div>
-
-    <div class="post-content">
-        <img src="{{ asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
-        <div class="post-content-body">
-            <p class="">
-                Rust allows for a lot of syntactic sugar, that makes it a pleasure to write. It is sometimes hard, however, to look behind the curtain and see what the compiler is really doing with our code.
-            </p>
-            <p class="">Jayne Lee -<small class="text-muted">March 26, 2019 </small></p>
-        </div>
-    </div>
-
-    <div class="post-content">
-        <img src="{{ asset('img/mb-3.png') }}" class="img-fluid" alt="user" />
-        <div class="post-content-body">
-            <p class="">
-                I never was a big fan of internships, partially because all the exciting companies were far away from my little village in Bavaria and partially because I was too shy to apply. Only once I applied for an internship in Ireland as part of a school program. Our teacher assigned the jobs and so my friend got one at Apple and I ended up at a medium-sized IT distributor — let's call them PcGo.
-            </p>
-            <p class="">Eric Elliot -<small class="text-muted">March 24, 2019 </small></p>
-        </div>
-    </div>
-
-    <div class="post-content">
-        <img src="{{ asset('img/mb-1.png') }}" class="img-fluid" alt="user" />
-        <div class="post-content-body">
-            <p class="">
-                For the first three decades of my life, I've used a German keyboard layout. A few months ago, I switched to a US layout. This post summarizes my thoughts around the topic. I was looking for a similar article before jumping the gun, but I couldn't find one — so I'll try to fill this gap. Why switch?
-            </p>
-            <p class="">Tyler Elliot -<small class="text-muted">March 22, 2019 </small></p>
-        </div>
-    </div>
-
-    <div class="post-content">
-        <img src="{{ asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
-        <div class="post-content-body">
-            <p class="">
-                Lots of people asked me to write another piece about the internals of well-known Unix commands. Well, actually, nobody asked me, but it makes for a good intro. I'm sure you’ve read the previous parts about `yes` and `ls` — they are epic.
-            </p>
-            <p class="">Jaynee Lee -<small class="text-muted">March 20, 2019 </small></p>
-        </div>
-    </div>
-
+    <div class="comments"></div>
 </div>
 
 <!-- End of Post Content -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<!-- convert to markdown script ends -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+const j = jQuery.noConflict();
+ j(document).ready(function (){
+    const route = "{{ route('comment',['username'=>$user->username,'post_id'=>$post['id']])  }}"
+    j.ajaxSetup({
+        headers:{
+            'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')
+        }
+     })
+    setInterval(() => {
+     j.ajax({
+         type:'GET',
+         url:route,
+         contentType:false,
+         processData:false,
+         success:function (data){
+             j('.comments').html(data);
+         }
+     })
+        
+    }, 2000);
+
+    const commentForm = document.querySelector('.commentForm');
+    const commentBtn  = document.querySelector('button[name="comment"]');
+    if(commentBtn !=null){
+        commentForm.onsubmit = commentBtn.addEventListener('click',function(e){
+            e.preventDefault();
+
+            const formData = new FormData(commentForm);
+            const saveComment = "{{ route('save-comment',['username'=>$user->username])  }}";
+            if(formData.get('body') == "") {
+                j('.text-danger').show();
+            }else{
+                j('.text-danger').hide();
+                j.ajax({
+                    type:"POST",
+                    url:saveComment,
+                    dataType:'json',
+                    data:formData,
+                    contentType:false,
+                    processData:false,
+                    beforeSend:function(){
+                        commentBtn.setAttribute('disabled','disabled');
+                    },
+                    success:function(response){
+                       // console.log(response);
+                        commentBtn.removeAttribute('disabled');
+                        commentForm.reset();
+                    }
+                })
+            }
+            
+        })
+    } 
+
+
+    j('#loginpopup').on('click',function(){
+        swal({
+            text: 'Opps! Login to comment on this post',
+            icon: "info",
+            button: {
+            text: "Login",
+            value: true,
+            visible: true,
+            className: "standard-color",
+            closeModal: true,
+            },
+        });
+
+        j('.standard-color').on('click',function(){
+            window.location = "/login";
+        })
+    })
+
+    
+ })
+</script>
 @endsection
