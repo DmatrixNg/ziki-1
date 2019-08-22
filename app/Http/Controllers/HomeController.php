@@ -265,8 +265,15 @@ class HomeController extends Controller
             $renamedUserContentFolder = false;
           }
       }
+      $oldname = Auth::user()->name;
+      $newname = $request->name;
+      $user_id = $request->user_id;
+      $email = $request->email;
+      $username= $request->username;
+      $bio = $request->bio;
+      $newUserPostFolderName = storage_path('app/'.$request->username);
 
-      if(!empty($request->file('profileimage'))){
+      if(!is_null($request->file('profileimage')) && $request->file('profileimage') !== ""){
           $url = Auth::user()->username."/images/";
           if($renamedUserContentFolder !== false){
             $url = $renamedUserContentFolder."/images/";
@@ -274,25 +281,53 @@ class HomeController extends Controller
 
          $path = Storage::disk('public')->put($url, $request->file('profileimage'));
          $fullPath = '/storage/'.$path;
-         $updated= DB::table('users')->where('id',$request->user_id)
-                                    ->update(['name'=>$request->name,'username'=>$request->username,'email'=>$request->email,'image'=>$fullPath,
-                                    'short_bio'=>$request->bio]);
+
+         $updated =   DB::transaction(function ()
+   use ($oldname,$newname,$fullPath,$newUserPostFolderName,$user_id,$email,$username,$bio) {
+
+  $updated= DB::table('users')->where('id',$user_id)
+    ->update(['name'=>$newname,'username'=>$username,'email'=>$email,'image'=>$fullPath,'short_bio'=>$bio]);
+
+DB::table('ext_rsses')->where('title',$oldname)
+    ->update([
+      'title'=>$newname,
+      'url'=> $newUserPostFolderName."/rss/rss.xml",
+      'link'=> $newUserPostFolderName."/rss/rss.xml",
+      'image' => $fullPath
+    ]);
+
+return true;
+
+   });
 
         if($updated) {
 
           return response()->json(['success'=>"Your changes has been saved successfully",'img_path'=>$fullPath,'renamedUserContentFolderName'=>$renamedUserContentFolder], 200);
         }
       } else {
-
         $fullPath = Auth::user()->image;
         if($renamedUserContentFolder !== false){
           $pathArr = explode('/',$fullPath);
           $fullPath = '/storage/'.$renamedUserContentFolder.'/images//'.end($pathArr);
         }
 
-        $updated = DB::table('users')->where('id',$request->user_id)
-                                    ->update(['name'=>$request->name,'username'=>$request->username,'email'=>$request->email,'image'=>$fullPath,'short_bio'=>$request->bio]);
 
+        $updated =   DB::transaction(function ()
+   use ($oldname,$newname,$fullPath,$newUserPostFolderName,$user_id,$email,$username,$bio) {
+
+     DB::table('users')->where('id',$user_id)
+                ->update(['name'=>$newname,'username'=>$username,'email'=>$email,'short_bio'=>$bio,'image' => $fullPath]);
+
+    DB::table('ext_rsses')->where('title',$oldname)
+                ->update([
+                  'title'=>$newname,
+                  'url'=> $newUserPostFolderName."/rss/rss.xml",
+                  'link'=> $newUserPostFolderName."/rss/rss.xml",
+                  'image' => $fullPath
+                ]);
+return true;
+
+});
                                       if($updated){
                                         return response()->json(['success'=>"Your changes has been saved successfully",'renamedUserContentFolderName'=>$renamedUserContentFolder], 200);
                                       }
