@@ -142,36 +142,6 @@ class pageController extends Controller
         return view('single-blog-post',compact('post','user'),['fcheck' => $fcheck, 'fcount'=>$fcount, 'count' => $count ]);
     }
 
-<<<<<<< HEAD
-=======
-    public function getPosts($username){
-      $user =  $this->user($username);;
-      $posts = DB::table('posts')->where('user_id',$user->id)->get();
-      $allPost = [];
-      foreach($posts as $post){
-        $parsedown  = new Parsedown();
-        $postContent = $parsedown->text($post->content);
-        preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
-        $first_img = "";
-        if (isset($matches[1])) {
-            // there are images
-            $first_img = $matches[1];
-            // strip all images from the text
-            $postContent = preg_replace("/<img[^>]+\>/i", " ", $postContent);
-        }
-        $createdAt = Carbon::parse($post->created_at);
-        $content['title'] = $post->title;
-        $content['body']  = $this->trim_words($postContent, 200);
-        $content['tags']  = $post->tags;
-        $content['slug']  = $this->clean($post->slug).'/'.base64_encode($post->id);
-        $content['image'] = $first_img;
-        $content['date']  =  $createdAt->format('l jS \\of F Y h:i A');;
-        $content['id'] = $post->id;
-        array_push($allPost,$content);
-      }
-      return $allPost;
-    }
->>>>>>> dev
 
 
     public function clean($string) {
