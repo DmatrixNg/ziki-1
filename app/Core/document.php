@@ -930,7 +930,7 @@ $user = Auth::user();
       $content['body'] = $parsedown->text($post->content);
       $content['date'] = $createdAt->format('l jS \\of F Y h:i A');
       $content['slug'] = $this->clean($post->slug);
-
+      $content['id'] = $post->id;
       return $content;
     }
 
