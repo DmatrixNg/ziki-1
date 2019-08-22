@@ -382,4 +382,31 @@ class HomeController extends Controller
       return response()->json(['id'=>$id,'username'=>$username],200);
     }
 
+
+    public function saveComment(Request $request, $username) {
+          $user_id = Auth::user()->id;
+          $validator=Validator::make($request->all(),[
+            'body' =>'required',
+            'post_id'=>'required'
+        ]);
+
+        if($validator->fails()){
+          return response()->json($validator->messages(), 200);
+      }
+
+      $createComment = DB::table('comments')->insert([
+        'post_id'=>$request->post_id,
+        'user_id'=>$user_id,
+        'comment'=>$request->body
+      ]);
+
+
+      if($createComment){
+        return response()->json(['comment'=>'saved'], 200);
+      }else{
+        return response()->json(['error'=>'Sorry an error occured while processing your comment.']);
+      }
+
+    }
+
 }

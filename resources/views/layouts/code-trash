@@ -409,3 +409,17 @@ function deletePost(id){
     });
   }
 }
+
+
+
+<!--<div class="post-content">
+        <div>
+
+        </div>
+        <div class="post-content-body">
+            <p class="mb-1 font-weight-bold">Lucid-<small class="text-muted">August 22, 2019</small></p>
+            <p class="">
+                This is a well written article. Interesting and illuminating read. I will be looking forward to more of your work
+            </p>
+        </div>
+    </div> -->

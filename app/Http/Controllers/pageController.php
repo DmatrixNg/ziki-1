@@ -101,15 +101,19 @@ class pageController extends Controller
     public function getPost($username,$id){
       $user = $this->user($username);
       $post = DB::table('posts')->where(['id'=>$id,'user_id'=>$user->id])->first();  
-      $parsedown  = new Parsedown();
-      $createdAt = Carbon::parse($post->created_at);
-      $content['tags'] = $post->tags;
-      $content['title'] =$post->title;
-      $content['body'] = $parsedown->text($post->content);
-      $content['date'] = $createdAt->format('l jS \\of F Y h:i A');
-      $content['slug'] = $this->clean($post->slug);
+      if(!empty($post)) {
+        $parsedown  = new Parsedown();
+        $createdAt = Carbon::parse($post->created_at);
+        $content['tags'] = $post->tags;
+        $content['id'] = $post->id;
+        $content['title'] =$post->title;
+        $content['body'] = $parsedown->text($post->content);
+        $content['date'] = $createdAt->format('l jS \\of F Y h:i A');
+        $content['slug'] = $this->clean($post->slug);
 
-      return $content;
+        return $content;
+      }
+      
     }
 
     public function singlePostPage($username,$postTitle,$id){
@@ -157,29 +161,33 @@ class pageController extends Controller
     public function getPosts($username){
       $user =  $this->user($username);;
       $posts = DB::table('posts')->where('user_id',$user->id)->get();
-      $allPost = [];
-      foreach($posts as $post){
-        $parsedown  = new Parsedown();
-        $postContent = $parsedown->text($post->content);
-        preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
-        $first_img = "";
-        if (isset($matches[1])) {
-            // there are images
-            $first_img = $matches[1];
-            // strip all images from the text
-            $postContent = preg_replace("/<img[^>]+\>/i", " ", $postContent);
+      if(!empty($posts)) {
+        $allPost = [];
+        foreach($posts as $post){
+          $parsedown  = new Parsedown();
+          $postContent = $parsedown->text($post->content);
+          preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
+          $first_img = "";
+          if (isset($matches[1])) {
+              // there are images
+              $first_img = $matches[1];
+              // strip all images from the text
+              $postContent = preg_replace("/<img[^>]+\>/i", " ", $postContent);
+          }
+          $createdAt = Carbon::parse($post->created_at);
+          $content['title'] = $post->title;
+          $content['body']  = $this->trim_words($postContent, 200);
+          $content['tags']  = $post->tags;
+          $content['slug']  = $this->clean($post->slug).'/'.base64_encode($post->id);
+          $content['image'] = $first_img;
+          $content['date']  =  $createdAt->format('l jS \\of F Y h:i A');;
+          $content['id'] = $post->id;
+          array_push($allPost,$content);
         }
-        $createdAt = Carbon::parse($post->created_at);
-        $content['title'] = $post->title;
-        $content['body']  = $this->trim_words($postContent, 200);
-        $content['tags']  = $post->tags;
-        $content['slug']  = $this->clean($post->slug).'/'.base64_encode($post->id);
-        $content['image'] = $first_img;
-        $content['date']  =  $createdAt->format('l jS \\of F Y h:i A');;
-        $content['id'] = $post->id;
-        array_push($allPost,$content);
+        return $allPost;
+
       }
-      return $allPost;
+
     }
 
 
@@ -454,5 +462,18 @@ class pageController extends Controller
 
   }
 
+
+  public function comments($username, $post_id) {
+    
+    $comments = DB::table('comments')
+                ->join('users','comments.user_id','=','users.id')
+                ->select('comments.*','users.username','users.email','users.image')
+                ->where('comments.post_id',$post_id)
+                ->orderBy('comments.id','DESC')
+                ->get();
+    $carbon =  new Carbon;
+    return view('comments')->with(['comments'=>$comments,'carbon'=>$carbon]);
+    
+  }
 
 }

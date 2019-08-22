@@ -73,4 +73,6 @@ Route::prefix('{username}')->group(function () {
     Route::get('/followers','pageController@followers')->name("followers");
     Route::post('/update-contact-details','HomeController@updateContactDetails');
     Route::get('/delete-post/{id}','HomeController@deletePost')->name('deletePost');
+    Route::get('/comments/{post_id}','pageController@comments')->name('comment');
+    Route::post('/save-comment','HomeController@saveComment')->name('save-comment');
 });
