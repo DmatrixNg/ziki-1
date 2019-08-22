@@ -162,7 +162,7 @@ class pageController extends Controller
         $parsedown  = new Parsedown();
         $postContent = $parsedown->text($post->content);
         preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
-        $first_img = false;
+        $first_img = "";
         if (isset($matches[1])) {
             // there are images
             $first_img = $matches[1];
