@@ -134,13 +134,13 @@ class Document
     public function create($title,$content, $tags, $image,$username){
 
         if (!empty($image)) {
-          $url = $username."/images/";
+          $url = Auth::user()->id."/images/";
           if(is_array($image)) {
               foreach ($image as $key => $value) {
 
                   $decoded = base64_decode($image[$key]);
 
-                  $img_path = 'public/'.$username."/images/".$key;
+                  $img_path = 'public/'.Auth::user()->id."/images/".$key;
                 $image = Storage::disk('local')->put( $img_path, $decoded);
 
               }
@@ -945,7 +945,7 @@ $user = Auth::user();
             $parsedown  = new Parsedown();
             $postContent = $parsedown->text($post->content);
             preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
-            $first_img = false;
+            $first_img = "";
             if (isset($matches[1])) {
                 // there are images
                 $first_img = $matches[1];

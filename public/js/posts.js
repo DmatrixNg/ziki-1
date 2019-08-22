@@ -73,7 +73,7 @@ let j = jQuery.noConflict();
           const [, fullURI, ext, uriData] = imageURI.match(/\!\[\]\((data:image\/(\w+);base64,([^)]*))\)/);
           const id = Math.random().toString(36).substr(2, 10);
           const newImgName = `img-${id}.${ext}`;
-          const username = j('meta[name="username"]').attr('content');
+          const username = j('meta[name="user_id"]').attr('content');
           
  
 

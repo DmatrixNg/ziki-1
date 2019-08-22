@@ -423,3 +423,29 @@ function deletePost(id){
             </p>
         </div>
     </div> -->
+
+
+  //   $renamedUserContentFolder = false;
+      //   if(Auth::user()->username !== $request->username){
+      //     $oldUserPostFolderName = storage_path('app/'.Auth::user()->username);
+      //     $oldUserImgFolderName = storage_path('app/public/'.Auth::user()->username);
+
+      //     $FolderName = storage_path('app/'.$request->username);
+      //     $newUserImgFolderName = storage_path('app/public/'.$request->username);
+
+      //   if(rename($oldUserPostFolderName, $FolderName) && rename($oldUserImgFolderName, $newUserImgFolderName)){
+      //       $renamedUserContentFolder = $request->username;
+      //     }else{
+      //       $renamedUserContentFolder = false;
+      //     }
+      // }
+
+    // if($renamedUserContentFolder !== false){
+          //   $url = $renamedUserContentFolder."/images/";
+          // }
+
+
+      // if($renamedUserContentFolder !== false){
+        //   $pathArr = explode('/',$fullPath);
+        //   $fullPath = '/storage/'.Auth::user()->id.'/images//'.end($pathArr);
+        // }

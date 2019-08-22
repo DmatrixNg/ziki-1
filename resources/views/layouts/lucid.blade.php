@@ -8,6 +8,7 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   @auth
   <meta name="username" content="{{ Auth::user()->username }}">
+  <meta name="user_id" content="{{ Auth::user()->id }}">
   @endauth
   <!-- <title>{{ config('app.name', 'Lucid') }}</title> -->
   <title>@yield('title')</title>

@@ -57,13 +57,14 @@ class LoginController extends Controller
       $users       =   $this->findOrCreateUser($userSocial, $provider);
 
           Auth::login($users, true);
+          $user_id = $users->id;
           $username = $users->username;
       //    dd(  $email);
-          $path = trim($username).'/';
-          Storage::makeDirectory($username);
-          Storage::makeDirectory('public/'.$username);
+          $path = trim($user_id).'/';
+          Storage::makeDirectory($user_id);
+          Storage::makeDirectory('public/'.$user_id);
           $this->store_settings($path, $users->id);
-          $rss = new \Lucid\Core\Document($username);
+          $rss = new \Lucid\Core\Document($user_id);
             $rss->DemoRSS();
           return redirect()->to("/{$username}");
     }

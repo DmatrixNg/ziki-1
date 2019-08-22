@@ -251,39 +251,23 @@ class HomeController extends Controller
       if($validator->fails()){
           return response()->json($validator->messages(), 200);
       }
-        $renamedUserContentFolder = false;
-        if(Auth::user()->username !== $request->username){
-          $oldUserPostFolderName = storage_path('app/'.Auth::user()->username);
-          $oldUserImgFolderName = storage_path('app/public/'.Auth::user()->username);
-
-          $newUserPostFolderName = storage_path('app/'.$request->username);
-          $newUserImgFolderName = storage_path('app/public/'.$request->username);
-
-        if(rename($oldUserPostFolderName, $newUserPostFolderName) && rename($oldUserImgFolderName, $newUserImgFolderName)){
-            $renamedUserContentFolder = $request->username;
-          }else{
-            $renamedUserContentFolder = false;
-          }
-      }
+      
       $oldname = Auth::user()->name;
       $newname = $request->name;
       $user_id = $request->user_id;
       $email = $request->email;
       $username= $request->username;
       $bio = $request->bio;
-      $newUserPostFolderName = storage_path('app/'.$request->username);
+      $FolderName = storage_path('app/'.Auth::user()->id);
 
       if(!is_null($request->file('profileimage')) && $request->file('profileimage') !== ""){
-          $url = Auth::user()->username."/images/";
-          if($renamedUserContentFolder !== false){
-            $url = $renamedUserContentFolder."/images/";
-          }
-
+          $url = Auth::user()->id."/images/";
+          
          $path = Storage::disk('public')->put($url, $request->file('profileimage'));
          $fullPath = '/storage/'.$path;
 
          $updated =   DB::transaction(function ()
-   use ($oldname,$newname,$fullPath,$newUserPostFolderName,$user_id,$email,$username,$bio) {
+   use ($oldname,$newname,$fullPath,$FolderName,$user_id,$email,$username,$bio) {
 
   $updated= DB::table('users')->where('id',$user_id)
     ->update(['name'=>$newname,'username'=>$username,'email'=>$email,'image'=>$fullPath,'short_bio'=>$bio]);
@@ -291,8 +275,8 @@ class HomeController extends Controller
 DB::table('ext_rsses')->where('title',$oldname)
     ->update([
       'title'=>$newname,
-      'url'=> $newUserPostFolderName."/rss/rss.xml",
-      'link'=> $newUserPostFolderName."/rss/rss.xml",
+      'url'=> $FolderName."/rss/rss.xml",
+      'link'=> $FolderName."/rss/rss.xml",
       'image' => $fullPath
     ]);
 
@@ -302,18 +286,13 @@ return true;
 
         if($updated) {
 
-          return response()->json(['success'=>"Your changes has been saved successfully",'img_path'=>$fullPath,'renamedUserContentFolderName'=>$renamedUserContentFolder], 200);
+          return response()->json(['success'=>"Your changes has been saved successfully",'img_path'=>$fullPath,'renamedUserContentFolderName'=>$request->username], 200);
         }
       } else {
         $fullPath = Auth::user()->image;
-        if($renamedUserContentFolder !== false){
-          $pathArr = explode('/',$fullPath);
-          $fullPath = '/storage/'.$renamedUserContentFolder.'/images//'.end($pathArr);
-        }
-
 
         $updated =   DB::transaction(function ()
-   use ($oldname,$newname,$fullPath,$newUserPostFolderName,$user_id,$email,$username,$bio) {
+   use ($oldname,$newname,$fullPath,$FolderName,$user_id,$email,$username,$bio) {
 
      DB::table('users')->where('id',$user_id)
                 ->update(['name'=>$newname,'username'=>$username,'email'=>$email,'short_bio'=>$bio,'image' => $fullPath]);
@@ -321,15 +300,15 @@ return true;
     DB::table('ext_rsses')->where('title',$oldname)
                 ->update([
                   'title'=>$newname,
-                  'url'=> $newUserPostFolderName."/rss/rss.xml",
-                  'link'=> $newUserPostFolderName."/rss/rss.xml",
+                  'url'=> $FolderName."/rss/rss.xml",
+                  'link'=> $FolderName."/rss/rss.xml",
                   'image' => $fullPath
                 ]);
 return true;
 
 });
                                       if($updated){
-                                        return response()->json(['success'=>"Your changes has been saved successfully",'renamedUserContentFolderName'=>$renamedUserContentFolder], 200);
+                                        return response()->json(['success'=>"Your changes has been saved successfully",'renamedUserContentFolderName'=>$request->username], 200);
                                       }
       }
 

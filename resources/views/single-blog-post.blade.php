@@ -27,6 +27,12 @@ $location= 'singlePost';
   color:#fff;
   border:1px solid #871e99 !important;
 }
+
+.text-danger{
+  font-weight:400px !important;
+  font-size:12px !important;
+
+}
 </style>
 <div class="post-content">
     <div class="post-content-body">
