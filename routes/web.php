@@ -51,7 +51,7 @@ Route::prefix('{username}')->group(function () {
 
 
     Route::get('/contact', 'pageController@contact');
-    Route::get('/post/{postTitle}/{id}','pageController@singlePostPage');
+    Route::get('/post/{postTitle}','pageController@singlePostPage');
     Route::get('/','pageController@homePage');
     Route::get('/home','pageController@homePage');
     Route::get('/thoughts','pageController@thoughts');
@@ -63,9 +63,11 @@ Route::prefix('{username}')->group(function () {
     Route::post('/addrss','ExtRssController@addRss');
     Route::post('/unfollow','ExtRssController@unfollow');
     Route::post('/extrss','ExtRssController@addExtRss');
+
     Route::post('/publish','HomeController@publish');
     Route::post('/send-mail','SendEmailController@sendEmail');
     Route::get('/settings', 'HomeController@settings');
+
     Route::post('/save_settings','HomeController@saveSettings');
     Route::get('/following','pageController@following')->name("following");
     Route::get('/followers','pageController@followers')->name("followers");
