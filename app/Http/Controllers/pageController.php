@@ -89,9 +89,9 @@ class pageController extends Controller
             //  $follower = $app->subscription();
                //dd($follower);
 
-          //    $userposts=$this->getPosts($username);
+               $userposts=$app->getPosts($username);
 
-              return view('home', ['posts' => $feed,'user'=>$user,'fcheck' => $fcheck,'fcount'=>$fcount, 'count' => $count]);
+              return view('home', ['userposts' => $feed,'user'=>$user,'fcheck' => $fcheck,'fcount'=>$fcount, 'count' => $count]);
 
         }
 
