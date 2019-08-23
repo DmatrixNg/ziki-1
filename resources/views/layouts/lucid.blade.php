@@ -22,7 +22,7 @@
   <link href="https://cdn.quilljs.com/1.3.4/quill.snow.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.min.css">
-  
+
   <style>
     .preloader-wrapper {
       display: none;
@@ -204,7 +204,26 @@
         <!-- Beginning of Navbar -->
         <div class="container-fluid p-0 m-0 mb-5 d-flex justify-content-between justify-content-lg-end">
           <a class="d-lg-none" id="sidebarToggle"><i class="icon ion-md-list" style="font-size: 1.8em"></i></a>
-          <a href="{{ route('under-construction') }}" class="mr-5 pr-4 notification text-main" data-target="#deleteModal"><i class="icon ion-md-notifications" style="font-size: 1.8em"></i></a>
+          <div class="dropdown">
+            <a class="mr-5 pr-4 notification text-main" role="button" id="dropdownNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon ion-md-notifications" style="font-size: 1.8em"></i><span class="badge badge-danger">9</span>
+              <span class="sr-only">unread notifications</span></a>
+            <div class="dropdown-menu dropdown-menu-right notification-menu" aria-labelledby="dropdownNotification">
+              <h6 class="font-weight-bold mx-2">Notifications</h6>
+              <div class="post-content border p-3">
+                <img src="{{ asset('img/mb-1.png') }}" class="img-fluid img-thumb" alt="user" />
+                <div class="post-content-body">
+                  <a class="m-0 font-weight-bold" href="/">Henry</a> commented on your post <a href="/" class="font-weight-bold">Making a difference</a>
+                </div>
+              </div>
+              <div class="post-content border p-3">
+                <img src="{{ asset('img/mb-1.png') }}" class="img-fluid img-thumb" alt="user" />
+                <div class="post-content-body">
+                  <a class="m-0 font-weight-bold" href="/">Henry</a> is now following you</a>
+                </div>
+              </div>
+              <a href="{{ route('under-construction') }}" class="font-weight-bold mx-2 mt-3">View all</a>
+            </div>
+          </div>
           <div class="dropdown" id="lucid-dropdown">
             <a class="nav-link dropdown-toggle pt-1" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img src="{{ asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
@@ -261,12 +280,12 @@
         // hide overlay
         $('.overlay').removeClass('active');
       });
-/*       $('[data-toggle="modal"]').on('click', function() {
-        // hide sidebar
-        $('#sidebar').addClass('d-none');
-        // hide overlay
-        $('.overlay').removeClass('active');
-      }); */
+      /*       $('[data-toggle="modal"]').on('click', function() {
+              // hide sidebar
+              $('#sidebar').addClass('d-none');
+              // hide overlay
+              $('.overlay').removeClass('active');
+            }); */
       $('#sidebarToggle').on('click', function() {
         // open sidebar
         $('#sidebar').addClass('active-sidebar');
