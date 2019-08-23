@@ -91,7 +91,7 @@ class pageController extends Controller
 
                $userposts=$app->getPosts($username);
 
-              return view('home', ['userposts' => $feed,'user'=>$user,'fcheck' => $fcheck,'fcount'=>$fcount, 'count' => $count]);
+              return view('home', ['userposts' => $userposts,'user'=>$user,'fcheck' => $fcheck,'fcount'=>$fcount, 'count' => $count]);
 
         }
 
