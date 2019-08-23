@@ -923,15 +923,20 @@ $user = Auth::user();
       $user =   DB::table('users')->where('username', $username)->first();
 
       $post = DB::table('posts')->where(['slug'=>$postSlug,'user_id'=>$user->id])->first();
-      $parsedown  = new Parsedown();
-      $createdAt = Carbon::parse($post->created_at);
-      $content['tags'] = $post->tags;
-      $content['title'] =$post->title;
-      $content['body'] = $parsedown->text($post->content);
-      $content['date'] = $createdAt->format('l jS \\of F Y h:i A');
-      $content['slug'] = $this->clean($post->slug);
-      $content['id'] = $post->id;
-      return $content;
+      if(!empty($post)) {
+
+        $parsedown  = new Parsedown();
+        $createdAt = Carbon::parse($post->created_at);
+        $content['tags'] = $post->tags;
+        $content['title'] =$post->title;
+        $content['body'] = $parsedown->text($post->content);
+        $content['date'] = $createdAt->format('l jS \\of F Y h:i A');
+        $content['slug'] = $this->clean($post->slug);
+        $content['id'] = $post->id;
+        return $content;
+
+      }
+      
     }
 
     //Get all post
@@ -940,7 +945,9 @@ $user = Auth::user();
           $user =   DB::table('users')->where('username', $username)->first();
 
           $posts = DB::table('posts')->where('user_id',$user->id)->get();
-          $allPost = [];
+          if(!empty($posts)){
+
+            $allPost = [];
           foreach($posts as $post){
             $parsedown  = new Parsedown();
             $postContent = $parsedown->text($post->content);
@@ -963,8 +970,11 @@ $user = Auth::user();
             array_push($allPost,$content);
           }
         //  $this->fetchAllRss();
-    //    dd($allPost);
+        //    dd($allPost);
           return $allPost;
+
+          }
+          
         }
 
  /*  public function getPost($post)

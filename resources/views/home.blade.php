@@ -19,7 +19,7 @@ $location= 'home';
 
 <!-- End of Post Content -->
 
-@foreach ($posts as $feeds)
+{{--@foreach ($posts as $feeds)
 @if (empty($feeds['image']))
 
 <div class="post-content">
@@ -53,10 +53,10 @@ $location= 'home';
   </a>
 </div>
 @endif
-@endforeach
+@endforeach --}}
 
 
-{{--@foreach($userposts as $userpost)
+@foreach($userposts as $userpost)
 
 @if($userpost['image'] !== '')
 
@@ -102,7 +102,7 @@ $location= 'home';
 
 @endif
 
-@endforeach--}}
+@endforeach
 
 
 @php
