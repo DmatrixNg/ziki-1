@@ -342,8 +342,6 @@ $location= 'post';
 </div>
 
 
-
-
 <div class="text-center">
   <!--   <button class="btn btn-primary pagination">
     Previous articles <i class="pl-2 icon ion-ios-arrow-forward"></i>
