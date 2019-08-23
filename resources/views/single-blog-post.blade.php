@@ -34,7 +34,7 @@ $location= 'singlePost';
 
 }
 </style>
-<div class="post-content pb-2">
+<div class="post-content">
     <div class="post-content-body m-0">
         <p class="post-date">
             <a href="{{URL::to('/')}}/{{$user->username}}/home" class="text-secondary"> Home </a> /
@@ -42,7 +42,7 @@ $location= 'singlePost';
         <cite class="post-body">
             Published on {{ $post['date'] }}
         </cite>
-        <h3 class="post-title my-4">
+        <h3 class="post-title mb-1">
             {{ $post['title'] }}
         </h3>
 
