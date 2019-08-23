@@ -19,7 +19,7 @@ $location= 'home';
 
 <!-- End of Post Content -->
 
-{{--@foreach ($posts as $feeds)
+{{-- @foreach ($posts as $feeds)
 @if (empty($feeds['image']))
 
 <div class="post-content">
@@ -106,7 +106,7 @@ $location= 'home';
 
 
 @php
- if(count($posts) > 30) {
+ if(count($userposts) > 30) {
 @endphp
   <div class="text-center">
     <button class="btn btn-primary pagination">
