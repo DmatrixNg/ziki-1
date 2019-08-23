@@ -320,8 +320,9 @@ $location= 'post';
     <img src="{{$post['image']}}" class="img-fluid post-img" alt="What I think of Donald Glover’s New Video" />
   </div>
   @endif
-  <div class="post-content-body">
-    <p class="post-date">{{ $post['date'] }}</p>
+  <div class="post-content-body row">
+<div class="col-10">
+<p class="post-date">{{ $post['date'] }}</p>
     <h3 class="post-title">
       <a class="no-decoration text-dark" href="post/{{$post['slug']}}">{!! $post['title'] !!}</a>
     </h3>
@@ -330,8 +331,9 @@ $location= 'post';
       echo strip_tags($post['body'])
       @endphp
     </p>
-    <div>
-      <a href="" class="mr-2 text-dark" data-toggle="modal" data-target="#editModal"><i class="icon ion-md-create" style="font-size: 1.5em"></i></a>
+</div>
+    <div class="col-2">
+      <a href="" class="mr-4 text-dark" data-toggle="modal" data-target="#editModal"><i class="icon ion-md-create" style="font-size: 1.5em"></i></a>
       <a href="" class="text-dark" onclick="deletePost({{$post['id']}})" data-toggle="modal" data-target="#deleteModal"><i class="icon ion-md-trash" style="font-size: 1.5em"></i></a>
     </div>
   </div>
