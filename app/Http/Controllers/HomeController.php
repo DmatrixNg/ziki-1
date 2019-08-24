@@ -124,14 +124,10 @@ class HomeController extends Controller
       $title = '';
       $body = $request->body;
       // filter out non-image data
-
-      $images = "";
-
-      $extra = "";
       $user = Auth::user();
       $username = $user->username;
       $post = new \Lucid\Core\Document($username);
-      $result = $post->create($title, $body, $tag="", $images, $extra, $postType="micro-blog");
+      $result = $post->createThough($body);
       return redirect($username.'/thoughts')->with('msg', 'Post Published');
     }
 
@@ -190,7 +186,7 @@ class HomeController extends Controller
             $images[$newKey] = $value;
         }
         $post = new \Lucid\Core\Document($username);
-        $createPost = $post->create($title, $content, $tags, $images,$username);
+        $createPost = $post->createPost($title, $content, $tags, $images,$username);
 
         if($createPost){
           return response()->json(["error" => false, "action"=>"publish", "message" => "Post published successfully"],200);
@@ -251,7 +247,7 @@ class HomeController extends Controller
       if($validator->fails()){
           return response()->json($validator->messages(), 200);
       }
-      
+
       $oldname = Auth::user()->name;
       $newname = $request->name;
       $user_id = $request->user_id;
@@ -262,7 +258,7 @@ class HomeController extends Controller
 
       if(!is_null($request->file('profileimage')) && $request->file('profileimage') !== ""){
           $url = Auth::user()->id."/images/";
-          
+
          $path = Storage::disk('public')->put($url, $request->file('profileimage'));
          $fullPath = '/storage/'.$path;
 
@@ -362,22 +358,38 @@ return true;
 
 
     public function saveComment(Request $request, $username) {
+
           $user_id = Auth::user()->id;
-          $validator=Validator::make($request->all(),[
-            'body' =>'required',
-            'post_id'=>'required'
+         $validator=Validator::make($request->all(),[
+           'body' =>'required',
+           'post_id'=>'required'
         ]);
 
-        if($validator->fails()){
-          return response()->json($validator->messages(), 200);
-      }
+       if($validator->fails()){
+         return response()->json($validator->messages(), 200);
+     }
 
-      $createComment = DB::table('comments')->insert([
+        $post = DB::table('posts')->where('id', $request->post_id)->first();
+
+        if (isset($request->parents_id) && $request->parents_id !== "") {
+          // code...
+          $parentPost = $request->parents_id;
+        }else {
+          $parentPost = null;
+        }
+
+    //     dd($post);
+      $createComment = DB::table('notifications')->insert([
         'post_id'=>$request->post_id,
-        'user_id'=>$user_id,
-        'comment'=>$request->body
+        'parent_comment_id'=>$parentPost,
+        'comment'=>$request->body,
+        'sender_id'=> $user_id,
+        'post_user_id'=>$post->user_id,
+        'status'=> 0,
+        'action'=>"Commented",
+        'type'=>"Post",
       ]);
-
+ //dd($createComment);
 
       if($createComment){
         return response()->json(['comment'=>'saved'], 200);
