@@ -37,7 +37,6 @@ Route::get('subscribe', function () {
 
 
 
-
 Route::get('under-construction', 'pageController@construction')->name('under-construction');
 Route::get('microblog','HomeController@microblog');
 Route::post('save-post','HomeController@savePost');
@@ -77,4 +76,6 @@ Route::prefix('{username}')->group(function () {
     Route::get('/delete-post/{id}','HomeController@deletePost')->name('deletePost');
     Route::get('/comments/{post_id}','pageController@comments')->name('comment');
     Route::post('/save-comment','HomeController@saveComment')->name('save-comment');
+    Route::post('/notif','pageController@notification')->name('notif');
+    Route::get('/notif','pageController@notification')->name('getNotif');
 });

@@ -11,6 +11,7 @@ use DB;
 use Carbon\Carbon;
 use Lucid\ext_rss;
 use Lucid\extfeeds;
+use Lucid\Thought;
 use Storage;
 /**
  *	The Document class holds all properties and methods of a single page document.
@@ -38,7 +39,7 @@ class Document
     //for creating markdown files
     //kjarts code here
     /*
-    public function create($title, $content, $tag="", $image, $extra, $postType="")
+    public function createPost($title, $content, $tag="", $image, $extra, $postType="")
     {
 
         date_default_timezone_set("Africa/Lagos");
@@ -131,7 +132,7 @@ class Document
         return $result;
     }
     */
-    public function create($title,$content, $tags, $image,$username){
+    public function createPost($title,$content, $tags, $image,$username){
 
         if (!empty($image)) {
           $url = Auth::user()->id."/images/";
@@ -171,7 +172,23 @@ class Document
     }
 
     }
+    public function createThough($content){
 
+
+      $insertPosts = DB::table('thoughts')->insert([
+        'user_id'=>Auth::user()->id,
+        'content'=>$content
+      ]);
+
+      if ($insertPosts) {
+        $result = array("error" => false, "action"=>"publish", "message" => "Post published successfully");
+        return true;
+    } else {
+        $result = array("error" => true, "action"=>"publish", "message" => "Fail while publishing, please try again");
+        return false;
+    }
+
+    }
 
     //get post
     public function postFixer($postTypeSubDir)
@@ -462,11 +479,11 @@ public function checker()
             }
 
             */
-            $feed = $this->getPosts($this->user);
+            $feed = $this->getPosts();
             $this->postFixer("posts");
-                  krsort($feed);
+
                 //  print_r($feed);
-                $user= DB::table('users')->where('username', $this->user)->first();
+                $user = DB::table('users')->where('username', $this->user)->first();
                   foreach ($feed as $key => $value) {
 
                   //  dd($this->user."/post/" . strtolower(strip_tags($value['slug' ])));
@@ -490,6 +507,18 @@ public function checker()
 
               //}
           }
+          public function Thoughts()
+          {
+
+                  $feed = $this->getThoughts($this->user);
+                //  $this->postFixer("micro-blog-posts");
+                        krsort($feed);
+
+
+                    //    dd($feed);
+                      return $feed;
+                    //}
+                }
 public function cleaner()
 {
   $user= DB::table('users')->where('username', $this->user)->first();
@@ -936,13 +965,37 @@ $user = Auth::user();
         return $content;
 
       }
-      
+
     }
 
     //Get all post
-        public function getPosts($username){
+    public function getThoughts(){
+    //  $user =  $this->user($username);
+      $user =   DB::table('users')->where('username', $this->user)->first();
+
+      $thoughts = DB::table('thoughts')->where('user_id',$user->id)->get();
+//dd($thoughts);
+      if(!empty($thoughts)){
+
+        $allPost = [];
+      foreach($thoughts as $thought){
+
+        $content['body']  = $thought->content;
+        $content['date']  =  $thought->created_at;
+        $content['id'] = $thought->id;
+        array_push($allPost,$content);
+      }
+    //  $this->fetchAllRss();
+    //    dd($allPost);
+      return $allPost;
+
+      }
+
+    }
+
+        public function getPosts(){
         //  $user =  $this->user($username);
-          $user =   DB::table('users')->where('username', $username)->first();
+          $user =   DB::table('users')->where('username', $this->user)->first();
 
           $posts = DB::table('posts')->where('user_id',$user->id)->get();
           if(!empty($posts)){
@@ -971,10 +1024,11 @@ $user = Auth::user();
           }
         //  $this->fetchAllRss();
         //    dd($allPost);
+          krsort($allPost);
           return $allPost;
 
           }
-          
+
         }
 
  /*  public function getPost($post)
