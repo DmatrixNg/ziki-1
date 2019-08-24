@@ -15,7 +15,7 @@ class AddStatusIdToPostsTable extends Migration
     {
         Schema::table('posts', function (Blueprint $table) {
             //
-            $table->integer('status_id');
+            $table->integer('status_id')->nullable();
         });
     }
 
