@@ -20,7 +20,7 @@ class CreateNotificationsTable extends Migration
             $table->text('comment');
             $table->integer('sender_id');
             $table->integer('post_user_id');
-            $table->integer('comment_status');
+            $table->integer('status');
             $table->string('action');
             $table->string('type');
             $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
