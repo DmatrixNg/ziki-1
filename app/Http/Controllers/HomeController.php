@@ -170,7 +170,6 @@ class HomeController extends Controller
 
 
     public function publish(Request $request,$username) {
-
         $title = isset($request->title) ? $request->title : '';
         $content = $request->postVal;
         $tags = $request->tags;
@@ -188,6 +187,7 @@ class HomeController extends Controller
         $post = new \Lucid\Core\Document($username);
         $createPost = $post->createPost($title, $content, $tags, $images,$username);
 
+      //  dd(  $createPost);
         if($createPost){
           return response()->json(["error" => false, "action"=>"publish", "message" => "Post published successfully"],200);
         }else{
