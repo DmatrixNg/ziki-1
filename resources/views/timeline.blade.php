@@ -1,10 +1,10 @@
 @extends('layouts.lucid')
 @section('title')
-  @if(Auth::user() && Auth::user()->username == $user->username)
-    Timeline - {{ $user->username }} - Lucid
-  @else
-   {{ $user->name }} (@ {{ $user->username }}) - Lucid
-  @endif
+@if(Auth::user() && Auth::user()->username == $user->username)
+Timeline - {{ $user->username }} - Lucid
+@else
+{{ $user->name }} (@ {{ $user->username }}) - Lucid
+@endif
 @endsection
 @php
 $location = 'timeline';
@@ -255,99 +255,115 @@ $location = 'timeline';
 </div>
 
 <!-- Begin content -->
-  <!-- Timeline Page -->
-    <div class="row mt-5">
-      <div class="col-md-12">
-        <?php $last = count($posts);
-        ?>
-        @foreach ($posts as $feeds)
-        <div class="post-content">
-          @if (empty($feeds['site_image']))
+<!-- Timeline Page -->
+<div class="row mt-5">
+  <div class="col-md-12">
+    <?php $last = count($posts);
+    ?>
+    @foreach ($posts as $feeds)
+    <div class="post-content">
+      <!--           @if (empty($feeds['site_image']))
           <img src="{{ asset('img/logo.jpg') }}" class="img-fluid img-thumb" alt="user" />
           @else
           <img src="{{ $feeds['site_image']}}" class="img-fluid img-thumb" alt="user" />
-          @endif
-          <div class="post-content-body">
-            <a href="{{URL::to('/')}}/{{$feeds['link']}}" class="no-decoration">
-              <h5 class="font-weight-bold">{{$feeds['title']}}</h5>
-            </a>
-            <p class="">
-              {{$feeds['des']}}
-            </p>
-            <p class=""><a href="{{$feeds['site']}}">{{$feeds['site']}}</a> -<small class="text-muted">{{$feeds['date']}} </small></p>
-          </div>
+          @endif -->
+      <img src="{{$user->image}}" class="timeline-img" alt={{ $user->name}} />
+      <div class="post-content-body mb-0">
+        <span class="text-muted">Technology</span>
+        <a href="{{URL::to('/')}}/{{$feeds['link']}}" class="no-decoration">
+          <h5 class="font-weight-bold">{{$feeds['title']}}</h5>
+        </a>
+        <p class="mb-1">
+          {{$feeds['des']}}
+        </p>
+        <div class="row">
+          <span class="col-6 col-sm-6 col-md-8">
+            <small>
+            <a href="{{$feeds['site']}}" class="text-muted">{{$feeds['site']}}</a>
+            <span class="font-weight-bold">.</span>
+            <span class="text-muted">{{$feeds['date']}}</span> 
+            </small>
+          </span>
+          <span class="col-6 col-sm-6 col-md-4">
+            <a href="" class="mr-1"><i class="icon ion-md-thumbs-up text-warning" style="font-size: 1.2em;"></i> 5</a>
+            <a href="" class="mr-1"><i class="icon ion-md-heart text-danger" style="font-size: 1.2em;"></i> 5</a>
+            <a href="{{URL::to('/')}}/{{$feeds['link']}}"><i class="icon ion-md-text text-primary" style="font-size: 1.2em;"></i> 5</a>
+          </span>
         </div>
-        @endforeach
       </div>
     </div>
-  <!-- End Timeline Page -->
+    @endforeach
+  </div>
+</div>
+<!-- End Timeline Page -->
 
 </html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 <script>
-const j = jQuery.noConflict();
- j(document).ready(function (){
+  const j = jQuery.noConflict();
+  j(document).ready(function() {
     const check = "{{ route('notif',['username'=>$user->username])  }}"
     j.ajaxSetup({
-        headers:{
-            'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')
-        }
-     })
-
-function load_unseen_notification(view = '')
-{
-j.ajax({
-  url:check,
-  method:"POST",
-  data:{view:view},
-  dataType:"json",
-  })
-.then (
-  function(data) {
-  //  console.log(data);
-
-   if(data.unseen_notification > 0)
-   {
-    j('.count').html(data.unseen_notification);
-   }
-
-
- })
-.catch(function(err) {
-    //console.log('Fetch Error :-S', err);
-    });
-  }
-  const view_notif = "{{ route('getNotif',['username'=>$user->username])  }}"
-
-  view = "";
-  j.ajax({
-    url:view_notif,
-    method:"Get",
-    data:{view:view},
-    dataType:"json",
+      headers: {
+        'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')
+      }
     })
-  .then (
-    function(data) {
-  //    console.log(data);
-  j(document).on('click', '#load', function(){
-    j('#notif').html(data.notification);
-  });
 
-     })
+    function load_unseen_notification(view = '') {
+      j.ajax({
+          url: check,
+          method: "POST",
+          data: {
+            view: view
+          },
+          dataType: "json",
+        })
+        .then(
+          function(data) {
+            //  console.log(data);
 
-  setInterval(function(){
-load_unseen_notification();
-}, 2000);
-
-j(document).on('click', '#notif', function(){
- j('.count').html('');
- load_unseen_notification('yes');
-  });
+            if (data.unseen_notification > 0) {
+              j('.count').html(data.unseen_notification);
+            }
 
 
+          })
+        .catch(function(err) {
+          //console.log('Fetch Error :-S', err);
+        });
+    }
+    const view_notif = "{{ route('getNotif',['username'=>$user->username])  }}"
 
-})
+    view = "";
+    j.ajax({
+        url: view_notif,
+        method: "Get",
+        data: {
+          view: view
+        },
+        dataType: "json",
+      })
+      .then(
+        function(data) {
+          //    console.log(data);
+          j(document).on('click', '#load', function() {
+            j('#notif').html(data.notification);
+          });
 
+        })
+
+    setInterval(function() {
+      load_unseen_notification();
+    }, 2000);
+
+    j(document).on('click', '#notif', function() {
+      j('.count').html('');
+      load_unseen_notification('yes');
+    });
+
+
+
+  })
 </script>
 @endsection
