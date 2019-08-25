@@ -254,7 +254,7 @@ class pageController extends Controller
         $contact = DB::table('contact_settings')->where('user_id',$user->id)->first();
 
 
-        return view('contact',compact('user','posts','contact'), ['fcheck' => $fcheck, 'fcount'=>$fcount, 'count' => $count ]);
+        return view('contact',compact('user','contact'), ['fcheck' => $fcheck, 'fcount'=>$fcount, 'count' => $count ]);
     }
 
 
@@ -530,5 +530,49 @@ class pageController extends Controller
     }
 
 
+  public function filterPost($method) {
 
+    if($method == "Recent"){
+      
+      $posts = DB::table('posts')
+                ->join('users','posts.user_id','=','users.id')
+                ->select('posts.*','users.image','users.username')
+                ->orderBy('posts.id','DESC')
+                ->get();
+      if(!empty($posts)){
+
+        $allPost = [];
+      foreach($posts as $post){
+        $parsedown  = new Parsedown();
+        $postContent = $parsedown->text($post->content);
+        preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
+        $first_img = "";
+        if (isset($matches[1])) {
+            // there are images
+            $first_img = $matches[1];
+            // strip all images from the text
+            $postContent = preg_replace("/<img[^>]+\>/i", " ", $postContent);
+        }
+        $createdAt = Carbon::parse($post->created_at);
+        $content['title'] = $post->title;
+        $content['body']  = $this->trim_words($postContent, 100);
+        $content['tags']  = $post->tags;
+        $content['slug']  = $this->clean($post->slug);
+        $content['image'] = $first_img;
+        $content['date']  =  $createdAt->format('M jS, Y h:i A');;
+        $content['id'] = $post->id;
+        $content['username'] = $post->username;
+        $content['user_img'] = $post->image;
+        
+        array_push($allPost,$content);
+      }
+      return view('filtered-posts')->with(['posts'=>$allPost]);
+
+      }
+    }elseif($method =="Popular"){
+
+      
+
+    }
+  }
 }

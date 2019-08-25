@@ -41,6 +41,8 @@ Route::get('microblog','HomeController@microblog');
 Route::post('save-post','HomeController@savePost');
 Route::post('save-subscription','pageController@saveSubscriptionEmail');
 
+Route::get('/filter/{method}','pageController@filterPost');
+
 
 
 Route::get('login/{provider}', 'Auth\LoginController@redirectToProvider');
