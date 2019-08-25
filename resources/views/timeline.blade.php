@@ -266,7 +266,7 @@ $location = 'timeline';
             <h6>Timeline</h6>
           </a>
       </li>
-      <li class="nav-item">
+      <!-- <li class="nav-item">
           <a href="#technology" class="nav-link tab-link ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="category" aria-selected="">
             <h6>Technology</h6>
           </a>
@@ -275,7 +275,7 @@ $location = 'timeline';
           <a href="more" class="nav-link tab-link ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="category" aria-selected="">
             <h6>Add More</h6>
           </a>
-      </li>
+      </li> -->
       </ul>
     </div>
     <div class="tab-content">
@@ -473,7 +473,7 @@ $location = 'timeline';
               </div>
             </div>
           </div>
-          <!-- <div class="col-xs-12 col-md-4 bg-light" style="height: 30vh;">
+          < <div class="col-xs-12 col-md-4 bg-light" style="height: 30vh;">
             <p class="font-weight-bold">Popular Topics</p>
           </div> -->
         <!-- </div>
