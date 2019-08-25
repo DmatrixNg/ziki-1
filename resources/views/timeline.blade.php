@@ -257,7 +257,7 @@ $location = 'timeline';
 <!-- Begin content -->
 <!-- Timeline Page -->
 <div>
-    <h4 class="ml-4 mb-3 pl-1">Explore Lucid</h4>
+    <!-- <h4 class="ml-4 mb-3 pl-1">Explore Lucid</h4> -->
     <!-- Begin content -->
     <div class="page-tab ml-4 mb-3">
       <ul class="nav nav-tabs navbar-light" id="follow-tabs" role="tablist">
@@ -265,22 +265,21 @@ $location = 'timeline';
           <a href="#timeline" class="nav-link tab-link active ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="category" aria-selected="">
             <h6>Timeline</h6>
           </a>
-        </li>
-        <li class="nav-item">
-          <a href="#category" class="nav-link tab-link ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="category" aria-selected="false">
-            <h6>Category</h6>
+      </li>
+      <li class="nav-item">
+          <a href="#technology" class="nav-link tab-link ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="category" aria-selected="">
+            <h6>Technology</h6>
           </a>
-        </li>
-        <li class="nav-item">
-          <a href="#page" class="nav-link tab-link ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="posts" aria-selected="false">
-            <h6>Posts</h6>
+      </li>
+      <li class="nav-item">
+          <a href="more" class="nav-link tab-link ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="category" aria-selected="">
+            <h6>Add More</h6>
           </a>
-        </li>
+      </li>
       </ul>
     </div>
     <div class="tab-content">
         <!-- timeline page -->
-
         <div class="tab-pane show active" role="tabpanel" id="timeline">
         <div class="row mt-5">
           <div class="col-md-12">
@@ -324,7 +323,7 @@ $location = 'timeline';
         </div>
          <!-- End timeline Page -->
       <!-- Category Page -->
-      <div class="tab-pane show" role="tabpanel" id="category">
+      <!-- <div class="tab-pane show" role="tabpanel" id="category">
         <div class="row p-3 m-0">
           <div class="col-xs-6 col-md-4 mb-3">
             <img src="{{ asset('img/politics.png') }}" class="w-100" alt="politics" />
@@ -383,22 +382,40 @@ $location = 'timeline';
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- End Category Page -->
 
       <!-- Posts Page -->
-      <div class="tab-pane" role="tabpanel" id="page">
+      <!-- <div class="tab-pane" role="tabpanel" id="page">
         <div class="row mx-3">
           <div class="col-xs-12 grid">
-          <select name="" id="" class="float-right bg-alt drop text-white">
-            <option value="">
-              fitness
+          <select name="" id="" class="float-right bg-alt drop text-white px-2 py-1 border-0">
+            <option class="text-dark bg-white cursor-pointer" value="all" selected>
+              All
             </option>
-            <option value="">
-              technology
+            <option class="text-dark bg-white cursor-pointer" value="fitness">
+              Fitness
             </option>
-            <option value="">
-              nutrition
+            <option class="text-dark bg-white cursor-pointer" value="technology">
+              Technology
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="health">
+              Health
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="politics">
+              Politics
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="sports">
+              Sports
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="movies">
+              Movies
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="music">
+              Music
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="lifestyle">
+              Lifestyle
             </option>
           </select>
           <div class="post-content mt-5 ">
@@ -459,8 +476,8 @@ $location = 'timeline';
           <!-- <div class="col-xs-12 col-md-4 bg-light" style="height: 30vh;">
             <p class="font-weight-bold">Popular Topics</p>
           </div> -->
-        </div>
-      </div>
+        <!-- </div>
+      </div> -->
       <!-- End Posts page -->
     </div>
 <!-- End Timeline Page -->

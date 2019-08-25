@@ -20,7 +20,7 @@
   }
 
   .drop {
-    width: 100px;
+    width: 120px;
     text-transform: capitalize;
     right: 5%;
     position: absolute;

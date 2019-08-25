@@ -413,3 +413,11 @@ ul.footer-links li a {
      object-fit: cover !important;
      border-radius: 50% !important;
  }
+
+ /* remove ugly outline on select elements*/
+ select:hover, select:active{
+     outline: none;
+ }
+ .cursor-pointer{
+     cursor: pointer;
+ }
