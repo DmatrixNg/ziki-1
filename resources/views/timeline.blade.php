@@ -390,15 +390,33 @@ $location = 'timeline';
       <div class="tab-pane" role="tabpanel" id="page">
         <div class="row mx-3">
           <div class="col-xs-12 grid">
-          <select name="" id="" class="float-right bg-alt drop text-white">
-            <option value="">
-              fitness
+          <select name="" id="" class="float-right bg-alt drop text-white px-2 py-1 border-0">
+            <option class="text-dark bg-white cursor-pointer" value="all" selected>
+              All
             </option>
-            <option value="">
-              technology
+            <option class="text-dark bg-white cursor-pointer" value="fitness">
+              Fitness
             </option>
-            <option value="">
-              nutrition
+            <option class="text-dark bg-white cursor-pointer" value="technology">
+              Technology
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="health">
+              Health
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="politics">
+              Politics
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="sports">
+              Sports
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="movies">
+              Movies
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="music">
+              Music
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="lifestyle">
+              Lifestyle
             </option>
           </select>
           <div class="post-content mt-5 ">

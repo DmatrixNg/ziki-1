@@ -207,7 +207,7 @@
           @guest
           @else
         <div class="dropdown">
-            <a class="mr-5 pr-4 notification text-main" id="load" role="button" id="dropdownNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon ion-md-notifications" style="font-size: 1.8em"></i>
+            <a class="mr-5 pr-4 notification text-main" id="load" role="button" id="dropdownNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon ion-md-notifications cursor-pointer" style="font-size: 1.8em;"></i>
               <span class="badge badge-danger count"></span>
               <span class="sr-only">unread notifications</span></a>
             <div class="dropdown-menu dropdown-menu-right notification-menu" aria-labelledby="dropdownNotification">
@@ -222,7 +222,7 @@
           </div>
             @endguest
           <div class="dropdown" id="lucid-dropdown">
-            <a class="nav-link dropdown-toggle pt-1" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle pt-1 cursor-pointer" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img src="{{ asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
