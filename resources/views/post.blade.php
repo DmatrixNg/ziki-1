@@ -258,6 +258,15 @@ $location= 'post';
   .ui-front {
     z-index: 9999999 !important;
 }
+/* Only make edit and delete buttons appear on hover for bigger screens */
+@media screen and (min-width: 1024px){
+  div.edit-delete-buttons{
+    display: none;
+  }
+  .post-content-body:hover div.edit-delete-buttons {
+    display: initial;
+  }
+}
 </style>
 <!-- The editor code goes here -->
 @if(Auth::user()->username == $user->username)
@@ -339,10 +348,10 @@ $location= 'post';
       @endphp
     </p>
 </div>
-    <div class="col-2">
-      <a href="" class="mr-4 text-dark" data-toggle="modal" data-target="#editModal" onclick="editPost(
+    <div class="col-2 edit-delete-buttons">
+      <a title="edit this post" href="" class="mr-4 text-dark" data-toggle="modal" data-target="#editModal" onclick="editPost(
         '{{ $post['slug'] }}')"><i class="icon ion-md-create" style="font-size: 1.5em"></i></a>
-      <a href="javascript:void(0)" class="text-dark"  onclick="deletePost({{ $post['id'] }})" data-toggle="modal" data-target="#deleteModal"><i class="icon ion-md-trash" style="font-size: 1.5em"></i></a>
+      <a title="delete this post" href="javascript:void(0)" class="text-dark"  onclick="deletePost({{ $post['id'] }})" data-toggle="modal" data-target="#deleteModal"><i class="icon ion-md-trash" style="font-size: 1.5em"></i></a>
     </div>
   </div>
 
