@@ -309,11 +309,11 @@ $location = 'timeline';
                     <span class="text-muted">{{$feeds['date']}}</span>
                     </small>
                   </span>
-                  <span class="col-6 col-sm-6 col-md-4">
+             <!--     <span class="col-6 col-sm-6 col-md-4">
                     <a href="" class="mr-1"><i class="icon ion-md-thumbs-up text-warning" style="font-size: 1.2em;"></i> 5</a>
                     <a href="" class="mr-1"><i class="icon ion-md-heart text-danger" style="font-size: 1.2em;"></i> 5</a>
                     <a href="{{URL::to('/')}}/{{$feeds['link']}}"><i class="icon ion-md-text text-primary" style="font-size: 1.2em;"></i> 5</a>
-                  </span>
+                  </span>  -->
                 </div>
               </div>
             </div>
