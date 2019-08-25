@@ -55,7 +55,12 @@ function editPost(post_id){
          j('#post-title').val(data.data.title)
          const editor = document.getElementsByClassName('ql-editor');
          editor[1].innerHTML = data.data.body
-          j('#tag').val(data.data.tags)
+         if(data.data.tags !=null) {
+          j('#tag').tokenfield('setTokens',data.data.tags)
+         }else{
+          j('#tag').tokenfield('setTokens',[])
+         }
+          
           j('#post_id').val(data.data.id)
         },
         error:function (error){
