@@ -252,6 +252,9 @@ $location= 'post';
     padding: 7px;
     
   }
+  .tokenfield .token{
+    border: none;
+  }
   .ui-front {
     z-index: 9999999 !important;
 }

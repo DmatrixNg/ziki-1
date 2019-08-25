@@ -391,31 +391,31 @@ $location = 'timeline';
         <div class="row mx-3">
           <div class="col-xs-12 grid">
           <select name="" id="" class="float-right bg-alt drop text-white px-2 py-1 border-0">
-            <option value="all" selected>
+            <option class="text-dark bg-white cursor-pointer" value="all" selected>
               All
             </option>
-            <option value="fitness">
+            <option class="text-dark bg-white cursor-pointer" value="fitness">
               Fitness
             </option>
-            <option value="technology">
+            <option class="text-dark bg-white cursor-pointer" value="technology">
               Technology
             </option>
-            <option value="health">
+            <option class="text-dark bg-white cursor-pointer" value="health">
               Health
             </option>
-            <option value="politics">
+            <option class="text-dark bg-white cursor-pointer" value="politics">
               Politics
             </option>
-            <option value="sports">
+            <option class="text-dark bg-white cursor-pointer" value="sports">
               Sports
             </option>
-            <option value="movies">
+            <option class="text-dark bg-white cursor-pointer" value="movies">
               Movies
             </option>
-            <option value="music">
+            <option class="text-dark bg-white cursor-pointer" value="music">
               Music
             </option>
-            <option value="lifestyle">
+            <option class="text-dark bg-white cursor-pointer" value="lifestyle">
               Lifestyle
             </option>
           </select>
