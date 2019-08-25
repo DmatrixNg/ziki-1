@@ -15,11 +15,11 @@ class CreateNotificationsTable extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('post_id');
+            $table->integer('post_id')->nullable();
             $table->integer('parent_comment_id')->nullable();
-            $table->text('comment');
+            $table->text('comment')->nullable();
             $table->integer('sender_id');
-            $table->integer('post_user_id');
+            $table->integer('user_id');
             $table->integer('status');
             $table->string('action');
             $table->string('type');

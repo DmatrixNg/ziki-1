@@ -9,7 +9,6 @@ use KzykHys\FrontMatter\Document as Doc;
 use Auth;
 use DB;
 use Carbon\Carbon;
-use Lucid\ext_rss;
 use Lucid\extfeeds;
 use Lucid\Thought;
 use Storage;
@@ -373,21 +372,18 @@ class Document
 public function Feeds()
 {
   $user = Auth::user();
-  $data= ext_rss::where('user_id', $user['id'])->get();
+  $data= DB::table('following')->where('my_id', $user['id'])->get();
   //$data=[];
   $urlArray = json_decode($data, true);
-  $urlArray2 = array(
-  //    array('title' => $user['name'], 'url' => $url, 'desc' => '', 'link' => '', 'image' => $user['image'], 'time' => ''),
-    //  array('title' => 'Stratechery by Ben Thompson',  'url' => 'http://stratechery.com/feed/' , 'desc' => 'On the business, strategy, and impact of technology.', 'link' => '', 'image' => "https://stratechery.com/wp-content/uploads/2018/03/cropped-android-chrome-512x512-1-32x32.png", 'time' => ' Fri, 12 Jul 2019 16:06:22 +0000')
-  );
-  $result = array_merge($urlArray, $urlArray2);
+
   $feed = [];
-foreach ($result as $url) {
-  $feeds = DB::table('extfeeds')->where('site', $url['title'])->get();
+foreach ($urlArray as $id) {
+  $user= DB::table('users')->where('id', $id['follower_id'])->first('name');
+  $feeds = DB::table('extfeeds')->where('site', $user->name)->get();
+//  dd($feeds );
     $feeds = json_decode($feeds, true);
   array_push($feed, $feeds);
 }
-  //dd($feed);
   $ex =[];
   for ($i=0; $i < count($feed) ; $i++) {
     for ($j=0; $j <count($feed[$i]) ; $j++) {
@@ -397,6 +393,7 @@ foreach ($result as $url) {
       //dd($ex);
     }
   }
+  //dd($ex);
   usort($ex, $this->build_sorter('id'));
 
     //arsort($ex);
@@ -806,15 +803,17 @@ $user = Auth::user();
     }
     public function subscriber()
     {
+
       $user =   DB::table('users')->where('username', $this->user)->first();
-        $data= ext_rss::where('title', $user->name)->get();
+
+        $data= DB::table('following')->where('follower_id', $user->id)->get();
         $data = json_decode($data, true);
         //  dd($data);
 
           $follower = [];
           foreach ($data as $key => $value) {
 
-            $follow = DB::table('users')->where('id', $value['user_id'])->get();
+            $follow = DB::table('users')->where('id', $value['my_id'])->get();
 
              foreach($follow as $key => $follow){
 
@@ -833,13 +832,13 @@ $user = Auth::user();
     {
       //$user = Auth::user();
     $user =   DB::table('users')->where('username', $this->user)->first();
-      $data= ext_rss::where('user_id', $user->id)->get();
+      $data= DB::table('following')->where('my_id', $user->id)->get();
       $data = json_decode($data, true);
 
-      //dd($data);
+    //  dd($data);
         $following = [];
         foreach ($data as $key => $value) {
-  $follower= DB::table('users')->where('name', $value['title'])->get();
+  $follower= DB::table('users')->where('id', $value['follower_id'])->get();
           foreach($follower as $key => $follower){
           $content['name'] = $follower->name;
           $content['username'] = $follower->username;
