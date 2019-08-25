@@ -58,7 +58,6 @@
           </a>
         </li>
       </ul>
-
     </div>
     <div class="tab-content">
       <!-- Category Page -->
