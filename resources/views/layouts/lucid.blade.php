@@ -140,7 +140,7 @@
             @endif
           </div>
           <div class="mt-3">
-            <a href="https://lucid.blog"> <small class="text-muted"><img src="{{ asset('img/logo.jpg') }}" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" /> Powered by Lucid</small></a>
+            <a href="https://lucid.blog"> <small class="text-muted"><img src="{{ secure_asset('img/logo.jpg') }}" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" /> Powered by Lucid</small></a>
           </div>
         </div>
       </div>
@@ -223,7 +223,7 @@
             @endguest
           <div class="dropdown" id="lucid-dropdown">
             <a class="nav-link dropdown-toggle pt-1 cursor-pointer" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img src="{{ asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
+              <img src="{{ secure_asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               @guest
