@@ -31,8 +31,7 @@ class pageController extends Controller
                 $username = $user->username;
 
                 $post = new \Lucid\Core\Document($username);
-                $following = $post->subscription();
-                $follower = $post->subscriber();
+
                 $post = $post->Feeds();
             //$post =[];
                 $sub = new \Lucid\Core\Subscribe($username);
@@ -54,7 +53,7 @@ class pageController extends Controller
 
 
   //dd($fcheck);
-                return view('timeline', ['posts' => $post,'fcheck' => $fcheck,'user'=>$user,'fcount'=>$fcount, 'count' => $count, 'following' => $following, 'follower' => $follower]);
+                return view('timeline', ['posts' => $post,'fcheck' => $fcheck,'user'=>$user,'fcount'=>$fcount, 'count' => $count]);
 
         }else {
 
@@ -99,6 +98,14 @@ class pageController extends Controller
 
     }
 
+    public function getPostData($username,$postSlug) {
+      $app = new \Lucid\Core\Document($username);
+      $post=$app->getPost($username,$postSlug);
+      if(!$post){
+          return response()->json(['error'=>'post not found'],404);
+      }
+      return response()->json(['data'=>$post]);
+    }
 
     public function singlePostPage($username,$postSlug){
         if(!$this->user($username)) {
@@ -438,38 +445,66 @@ class pageController extends Controller
 
     {
       DB::table('notifications')
-            ->where(['post_user_id' => Auth::user()->id, 'status' => 0 ] )
+            ->where(['user_id' => Auth::user()->id, 'status' => 0 ] )
             ->update(['status' => 1]);
 
     }
 
     $user =   DB::table('users')->where('username', $username)->first();
-
     $notif = DB::table('notifications')
-                ->join('users','notifications.post_user_id','=','users.id')
-                ->join('posts','notifications.post_id','=','posts.id')
-                ->select('notifications.*', 'posts.title', 'posts.slug', 'users.username','users.email','users.image')
-                ->where(['notifications.post_user_id' => Auth::user()->id] )
-                ->where('notifications.sender_id', "!=", Auth::user()->id)
-                ->orderBy('notifications.id','DESC')
+                ->where(['user_id' => Auth::user()->id] )
+                ->where('sender_id', "!=", Auth::user()->id)
                 ->get();
 
-  $output = '';
-  if (count($notif ) > 0) {
+              //  dd($notif);
+    $output = '';
+  if (count($notif) > 0) {
 
-  foreach ($notif as $notifs) {
+    foreach ($notif as $notifs) {
+      if ($notifs->type == "Post") {
 
+    $notif = DB::table('notifications')
+                ->join('users','notifications.sender_id','=','users.id')
+                ->join('posts','notifications.post_id','=','posts.id')
+                ->select('notifications.*', 'posts.title', 'posts.slug', 'users.username','users.email','users.image')
+                ->where(['notifications.user_id' => Auth::user()->id, 'notifications.post_id' => $notifs->post_id ] )
+                ->where('notifications.sender_id', "!=", Auth::user()->id)
+                ->orderBy('notifications.id','DESC')
+                ->first();
+
+//dd();
     if ($notifs->action == 'Commented') {
             $output .='
             <div class="post-content border p-3">
-              <img src="'.$notifs->image.'" class="img-fluid img-thumb" alt="user" />
+              <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
               <div class="post-content-body">
-                <a class="m-0 font-weight-bold" href="'.URL::to('/').'/'.$notifs->username.'">'.$notifs->username.'</a> commented on your post <a href="'.URL::to('/').'/'.$notifs->username.'/post/'.$notifs->slug.'" class="font-weight-bold">'.$notifs->title.'</a>
+                <a class="m-0 font-weight-bold" href="'.URL::to('/').'/'.$notif->username.'">'.$notif->username.'</a> commented on your post <a href="'.URL::to('/').'/'.Auth::user()->username.'/post/'.$notif->slug.'" class="font-weight-bold">'.$notif->title.'</a>
               </div>
             </div>';
 
+          }
+
+  }
+    if ($notifs->type == 'Following') {
+      $notif = DB::table('notifications')
+                  ->join('users','notifications.sender_id','=','users.id')
+                  ->select('notifications.*', 'users.username','users.email','users.image')
+                  ->where(['notifications.user_id' => Auth::user()->id] )
+                  ->where('notifications.sender_id', "!=", Auth::user()->id)
+                  ->orderBy('notifications.id','DESC')
+                  ->first();
+                //  dd($notif);
+
+            $output .='
+            <div class="post-content border p-3">
+              <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
+              <div class="post-content-body">
+                <a class="m-0 font-weight-bold" href="'.URL::to('/').'/'.$notif->username.'">'.$notif->username.'</a> is now Following you
+              </div>
+            </div>';
+}
     }
-    }
+
   }else{
         $output .= '
         <div class="post-content border p-3"><div class="post-content-body">
@@ -479,7 +514,7 @@ class pageController extends Controller
     }
 
     $notif = DB::table('notifications')
-                ->where(['post_user_id' => Auth::user()->id, 'status' => 0 ] )
+                ->where(['user_id' => Auth::user()->id, 'status' => 0 ] )
                 ->where('sender_id', "!=", Auth::user()->id)
                 ->get();
 
@@ -490,7 +525,7 @@ class pageController extends Controller
        'notification' => $output,
        'unseen_notification'  => $count
     );
-    return response()->json($data);
+ return response()->json($data);
 
     }
 

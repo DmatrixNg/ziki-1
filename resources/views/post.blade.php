@@ -250,7 +250,11 @@ $location= 'post';
 
   .tokenfield {
     padding: 7px;
+    
   }
+  .ui-front {
+    z-index: 9999999 !important;
+}
 </style>
 <!-- The editor code goes here -->
 @if(Auth::user()->username == $user->username)
@@ -267,7 +271,7 @@ $location= 'post';
                   <input type="text" id="new-post-title" class="form-control" placeholder="Title" />
                 </div>
                 <div class="col-12">
-                  <div id="editor">
+                  <div id="editor" >
                     <input type="text" name="body">
                   </div>
                 </div>
@@ -294,7 +298,7 @@ $location= 'post';
             <input type="button" class="form-control btn-sm btn btn-primary save-draft" value="Save Draft" />
           </div> -->
           <div class="col-3 col-sm-3 col-md-2">
-            <input type="submit" class="form-control btn-sm btn btn-primary publish-post" value="Publish">
+            <input type="submit" class="form-control btn-sm btn btn-primary publish-post publishBtn" value="Publish">
             <input type="hidden" class="form-control btn-sm btn btn-primary publish-post" value="Save Draft">
           </div>
           <div class="col-3 col-sm-3 col-md-2">
@@ -333,8 +337,9 @@ $location= 'post';
     </p>
 </div>
     <div class="col-2">
-      <a href="" class="mr-4 text-dark" data-toggle="modal" data-target="#editModal"><i class="icon ion-md-create" style="font-size: 1.5em"></i></a>
-      <a href="" class="text-dark" onclick="deletePost({{$post['id']}})" data-toggle="modal" data-target="#deleteModal"><i class="icon ion-md-trash" style="font-size: 1.5em"></i></a>
+      <a href="" class="mr-4 text-dark" data-toggle="modal" data-target="#editModal" onclick="editPost(
+        '{{ $post['slug'] }}')"><i class="icon ion-md-create" style="font-size: 1.5em"></i></a>
+      <a href="javascript:void(0)" class="text-dark"  onclick="deletePost({{ $post['id'] }})" data-toggle="modal" data-target="#deleteModal"><i class="icon ion-md-trash" style="font-size: 1.5em"></i></a>
     </div>
   </div>
 
@@ -372,25 +377,34 @@ $location= 'post';
 
 <!-- Edit Modal -->
 <div class="modal fade text-center" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-body">
-          <form method="POST" action="" class="mt-3">
+          <form method="POST" action="" class="mt-3 edit-post-form">
             @csrf
             <div class="form-group">
               <label class="sr-only">Title</label>
-              <input type="text" class="form-control" value="Placeholder" />
+              <input type="text" class="form-control" placeholder="Title" id="post-title" />
             </div>
             <div class="form-group">
-              <label class="sr-only">Text</label>
-              <input type="text" class="form-control" name="body" value="Placeholder">
+            <div id="editPostEditor">
+              <input type="text" name="body">
+            </div>
+            </div>
+            <div class="row">
+              <div class="col-12 collapse" id="collapseTagsField">
+                <div class="form-group">
+                  <input type="text" name="tags" id="tag" class="tagform-control">
+                  <input type="hidden" name="post_id" id="post_id">
+                </div>
+              </div>
             </div>
             <div class="row form-row flex-row-reverse">
               <div class="col-3 col-sm-3 col-md-2">
-                <input type="submit" class="form-control btn-sm btn btn-primary publish-post" value="Save">
+                <input type="submit" class="form-control btn-sm btn btn-primary publish-post savePostBtn" name="savePost" value="Save">
               </div>
               <div class="col-3 col-sm-3 col-md-2">
-                <input class="form-control btn-sm btn btn-primary add-tags" type="button" data-toggle="collapse" data-target="  #collapseExample" aria-expanded="false" aria-controls="collapseExample" value="Add Tags">
+                <input class="form-control btn-sm btn btn-primary add-tags" type="button" data-toggle="collapse" data-target="#collapseTagsField" aria-expanded="false" aria-controls="collapseExample" value="Add Tags">
               </div>
             </div>
           </form>
@@ -408,9 +422,10 @@ $location= 'post';
           <div>
             <h4 class="text-main mb-0"> Are you sure you want to delete this post?</h4>
             <small class="text-muted mt-0"><em>This action is irreversible</em></small>
-            <form method="get" action="" class="mt-3 delete-form">
+            <form method="post" action="" class="mt-3 delete-form">
               @csrf
-              <button type="submit" class="btn btn-danger" name="delete">Delete</button>
+              <input type="hidden" name="post_id">
+              <button type="submit" class="btn btn-danger" name="delete" id="deleteBtn">Delete</button>
             </form>
           </div>
         </div>
@@ -434,72 +449,56 @@ $location= 'post';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/bootstrap-tokenfield.min.js"></script>
 <script src="{{ asset('js/posts.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/edit-post.js') }}" type="text/javascript"></script>
 <script>
- j(document).ready(function (){
-    const check = "{{ route('notif',['username'=>$user->username])  }}"
-    j.ajaxSetup({
-        headers:{
-            'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')
-        }
+  function deletePost(post_id) {
+    j('#deleteBtn').on('click',function(e){
+     e.preventDefault();
+      
+     const formData = new FormData(document.querySelector('.delete-form'));
+     formData.set('post_id',post_id);
+     j.ajax({
+       type:"POST",
+       url:"delete-post",
+       dataType:'json',
+       data:formData,
+       contentType:false,
+       processData:false,
+       beforeSend:function(){
+         j('#deleteBtn').text('Deleting...')
+       },
+       success:function (data) {
+        document.querySelector('.delete-form').reset();
+        j('#deleteBtn').text('Delete')
+         if(data.success){
+           localStorage.setItem('delete',"deleted");
+           window.location = "/{{ $user->username }}/posts"
+         }
+       },
+       error:function (){
+        j('#deleteBtn').text('Delete')
+       }
      })
-
-function load_unseen_notification(view = '')
-{
-j.ajax({
-  url:check,
-  method:"POST",
-  data:{view:view},
-  dataType:"json",
-  })
-.then (
-  function(data) {
-  //  console.log(data);
-
-   if(data.unseen_notification > 0)
-   {
-    j('.count').html(data.unseen_notification);
-   }
-
-
- })
-.catch(function(err) {
-    //console.log('Fetch Error :-S', err);
-    });
-  }
-  const view_notif = "{{ route('getNotif',['username'=>$user->username])  }}"
-
-  view = "";
-  j.ajax({
-    url:view_notif,
-    method:"Get",
-    data:{view:view},
-    dataType:"json",
     })
-  .then (
-    function(data) {
-  //    console.log(data);
-  j(document).on('click', '#load', function(){
-    j('#notif').html(data.notification);
-  });
+  }
 
-     })
-
-  setInterval(function(){
-load_unseen_notification();
-}, 2000);
-
-j(document).on('click', '#notif', function(){
- j('.count').html('');
- load_unseen_notification('yes');
-  });
-
-
-
-})
-
-</script>
-<script>
-
+  j(document).ready(function(){
+    const postDelete=localStorage.getItem('delete');
+    if(postDelete == "deleted"){
+      window.localStorage.removeItem('delete');
+      swal({
+        text: "Your post was successfully deleted!",
+        icon: "success",
+        button: {
+          text: "OK",
+          value: true,
+          visible: true,
+          className: "standard-color",
+          closeModal: true,
+      },
+      });
+    }
+  })
 </script>
 
 @endsection
