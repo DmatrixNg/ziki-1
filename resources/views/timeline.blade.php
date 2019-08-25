@@ -280,7 +280,7 @@ $location = 'timeline';
     </div>
     <div class="tab-content">
         <!-- timeline page -->
-        
+
         <div class="tab-pane show active" role="tabpanel" id="timeline">
         <div class="row mt-5">
           <div class="col-md-12">
@@ -307,7 +307,7 @@ $location = 'timeline';
                     <small>
                     <a href="{{$feeds['site']}}" class="text-muted">{{$feeds['site']}}</a>
                     <span class="font-weight-bold">.</span>
-                    <span class="text-muted">{{$feeds['date']}}</span> 
+                    <span class="text-muted">{{$feeds['date']}}</span>
                     </small>
                   </span>
                   <span class="col-6 col-sm-6 col-md-4">
@@ -466,72 +466,5 @@ $location = 'timeline';
 <!-- End Timeline Page -->
 
 </html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-<script>
-  const j = jQuery.noConflict();
-  j(document).ready(function() {
-    const check = "{{ route('notif',['username'=>$user->username])  }}"
-    j.ajaxSetup({
-      headers: {
-        'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')
-      }
-    })
-
-    function load_unseen_notification(view = '') {
-      j.ajax({
-          url: check,
-          method: "POST",
-          data: {
-            view: view
-          },
-          dataType: "json",
-        })
-        .then(
-          function(data) {
-            //  console.log(data);
-
-            if (data.unseen_notification > 0) {
-              j('.count').html(data.unseen_notification);
-            }
-
-
-          })
-        .catch(function(err) {
-          //console.log('Fetch Error :-S', err);
-        });
-    }
-    const view_notif = "{{ route('getNotif',['username'=>$user->username])  }}"
-
-    view = "";
-    j.ajax({
-        url: view_notif,
-        method: "Get",
-        data: {
-          view: view
-        },
-        dataType: "json",
-      })
-      .then(
-        function(data) {
-          //    console.log(data);
-          j(document).on('click', '#load', function() {
-            j('#notif').html(data.notification);
-          });
-
-        })
-
-    setInterval(function() {
-      load_unseen_notification();
-    }, 2000);
-
-    j(document).on('click', '#notif', function() {
-      j('.count').html('');
-      load_unseen_notification('yes');
-    });
-
-
-
-  })
-</script>
 @endsection

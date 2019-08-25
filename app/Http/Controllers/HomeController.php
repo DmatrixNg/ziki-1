@@ -61,6 +61,12 @@ class HomeController extends Controller
         return view('home', ['fcheck' => $fcheck, 'posts' => $feed,'fcount'=>$fcount, 'count' => $count]);
 
     }
+    public function fix()
+    {
+      echo "Initiating Fix";
+     $fix = new \Lucid\Core\Subscribe(Auth::user()->username);
+      $fix = $fix->fix();
+    }
     public function timeline($username)
     {
       $user = Auth::user();
@@ -384,7 +390,7 @@ return true;
         'parent_comment_id'=>$parentPost,
         'comment'=>$request->body,
         'sender_id'=> $user_id,
-        'post_user_id'=>$post->user_id,
+        'user_id'=>$post->user_id,
         'status'=> 0,
         'action'=>"Commented",
         'type'=>"Post",

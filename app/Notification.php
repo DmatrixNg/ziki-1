@@ -13,7 +13,7 @@ class Notification extends Model
       'parent_comment_id',
       'comment',
       'sender_id',
-      'post_user_id',
+      'user_id',
       'status',
       'action',
       'type'
