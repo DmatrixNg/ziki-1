@@ -115,9 +115,12 @@ let j = jQuery.noConflict();
             data:formData,
             contentType: false,
             processData: false,
+            beforeSend:function(){
+              j('.publishBtn').text('Publishing...');
+            },
             success : function (res) {
-              console.log(JSON.stringify(res));
-
+              // console.log(JSON.stringify(res));
+              j('.publishBtn').text('Published');
                 if (res.error == false && res.action == 'publish') {
                   window.localStorage.setItem('publish', 'success');
                   window.location = '/'+j('meta[name="username"]').attr('content')+'/posts';
@@ -126,6 +129,10 @@ let j = jQuery.noConflict();
                   window.localStorage.setItem('savedToDrafts', 'success');
                   window.location = '/'+j('meta[name="username"]').attr('content')+'/posts';
                 }
+            },
+            error:function(error){
+              j('.publishBtn').text('Publish');
+              console.log(error.statusText);
             }
         });
 

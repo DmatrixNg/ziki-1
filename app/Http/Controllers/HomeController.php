@@ -8,6 +8,7 @@ use Illuminate\Validation\Rule;
 use Validator;
 use DB;
 use Storage;
+use Parsedown;
 class HomeController extends Controller
 {
     /**
@@ -352,8 +353,27 @@ return true;
 
     }
 
-    public function deletePost($username,$id){
-      return response()->json(['id'=>$id,'username'=>$username],200);
+    public function deletePost(Request $request, $username){
+       $post = DB::table('posts')->where('id',$request->post_id)->first();
+       $parsedown  = new Parsedown();
+       $postContent = $parsedown->text($post->content);
+       preg_match_all('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
+       foreach($matches[1] as $found_img) {
+         $image_name_array = explode('/',$found_img);
+         $img_name = end($image_name_array);
+         $imagePath = storage_path('app/public/'.$post->user_id.'/images/'.$img_name);
+         if(file_exists($imagePath)) {
+           unlink($imagePath);
+         }
+       }
+       DB::table('notifications')->where('post_id',$post->id)->delete();
+      $deletePost = DB::table('posts')->where('id',$post->id)->delete();
+      if($deletePost) {
+        return response()->json(['success'=>"Post Successfully Deleted"],200);
+      }else{
+        return response()->json(['error'=>"Something not right"],500);
+      }
+      
     }
 
 
@@ -397,6 +417,33 @@ return true;
         return response()->json(['error'=>'Sorry an error occured while processing your comment.']);
       }
 
+    }
+
+    public function editPost(Request $request, $username) {
+
+        $title = isset($request->title) ? $request->title : '';
+        $content = $request->postVal;
+        $tags = $request->tags;
+        $post_id = $request->post_id;
+
+
+          $initial_images = array_filter($request->all(), function ($key) {
+            return preg_match('/^img-\w*$/', $key);
+        }, ARRAY_FILTER_USE_KEY);
+
+        $images = [];
+        foreach ($initial_images as $key => $value) {
+            $newKey = preg_replace('/_/', '.', $key);
+            $images[$newKey] = $value;
+        }
+        $post = new \Lucid\Core\Document($username);
+        $updatePost = $post->saveUpdatedPost($title, $content, $tags, $images,$username,$post_id);
+
+        if($updatePost){
+          return response()->json(["error" => false, "action"=>"update", "message" => "Post Updated successfully"],200);
+        }else{
+          return response()->json(["error" => true, "action"=>"error", "message" => "Fail while publishing, please try again"]);
+        }
     }
 
 }

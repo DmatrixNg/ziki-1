@@ -99,6 +99,14 @@ class pageController extends Controller
 
     }
 
+    public function getPostData($username,$postSlug) {
+      $app = new \Lucid\Core\Document($username);
+      $post=$app->getPost($username,$postSlug);
+      if(!$post){
+          return response()->json(['error'=>'post not found'],404);
+      }
+      return response()->json(['data'=>$post]);
+    }
 
     public function singlePostPage($username,$postSlug){
         if(!$this->user($username)) {

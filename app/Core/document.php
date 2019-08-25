@@ -172,6 +172,48 @@ class Document
     }
 
     }
+
+    public function saveUpdatedPost($title,$content, $tags, $image,$username,$post_id) {
+
+        if (!empty($image)) {
+            $url = Auth::user()->id."/images/";
+            if(is_array($image)) {
+                foreach ($image as $key => $value) {
+  
+                    $decoded = base64_decode($image[$key]);
+  
+                    $img_path = 'public/'.Auth::user()->id."/images/".$key;
+                  $image = Storage::disk('local')->put( $img_path, $decoded);
+  
+                }
+            }
+        }else {
+          $image = null;
+        }
+  
+        $slug = str_replace(' ', '-', $title);
+  
+        $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+        $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
+        $updatePosts = DB::table('posts')->where('id',$post_id)->update([
+          'user_id'=>Auth::user()->id,
+          'title'=>$title,
+          'content'=>$content,
+          'tags'=>$tags,
+          'image'=> $image,
+          'slug'=>strtolower($slug)
+        ]);
+  
+        if ($updatePosts) {
+          
+          return true;
+      } else {
+         
+          return false;
+      }
+
+    }
+
     public function createThough($content){
 
 
@@ -959,7 +1001,7 @@ $user = Auth::user();
         $content['tags'] = $post->tags;
         $content['title'] =$post->title;
         $content['body'] = $parsedown->text($post->content);
-        $content['date'] = $createdAt->format('l jS \\of F Y h:i A');
+        $content['date'] = $createdAt->format('M jS, Y h:i A');
         $content['slug'] = $this->clean($post->slug);
         $content['id'] = $post->id;
         return $content;
@@ -997,7 +1039,7 @@ $user = Auth::user();
         //  $user =  $this->user($username);
           $user =   DB::table('users')->where('username', $this->user)->first();
 
-          $posts = DB::table('posts')->where('user_id',$user->id)->get();
+          $posts = DB::table('posts')->where('user_id',$user->id)->orderBy('id','DESC')->get();
           if(!empty($posts)){
 
             $allPost = [];
@@ -1018,13 +1060,10 @@ $user = Auth::user();
             $content['tags']  = $post->tags;
             $content['slug']  = $this->clean($post->slug);
             $content['image'] = $first_img;
-            $content['date']  =  $createdAt->format('l jS \\of F Y h:i A');;
+            $content['date']  =  $createdAt->format('M jS, Y h:i A');;
             $content['id'] = $post->id;
             array_push($allPost,$content);
           }
-        //  $this->fetchAllRss();
-        //    dd($allPost);
-          krsort($allPost);
           return $allPost;
 
           }
