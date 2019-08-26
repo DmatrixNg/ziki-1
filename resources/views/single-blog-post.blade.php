@@ -101,7 +101,7 @@ const j = jQuery.noConflict();
          }
      })
 
-    }, 2000);
+    }, 1000);
 
     const commentForm = document.querySelector('.commentForm');
     const commentBtn  = document.querySelector('button[name="comment"]');
