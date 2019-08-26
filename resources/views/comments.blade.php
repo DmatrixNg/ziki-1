@@ -13,7 +13,7 @@
     </div>
     
 </div>
-<button class="btn bg-alt text-white float-right mb-5">
+<button class="btn bg-alt text-white float-right">
         Reply
     </button>
 @empty
