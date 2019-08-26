@@ -22,7 +22,7 @@
 
 @if($reply->parent_comment_id == $comment->id)
 
-<div  id="reply">{{ $reply->comment }}</div>
+<div class="ml-5 pl-4" id="reply">{{ $reply->comment }}</div>
 
 
 @endif
