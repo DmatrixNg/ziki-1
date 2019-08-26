@@ -18,8 +18,8 @@
         </p>
     </div>
 </div>
-<div  id="reply"></div>
-<button onclick="reply({{$comment->id}},{{$comment->sender_id}},'{{ $comment->username  }}')" class="btn bg-alt text-white float-right ">
+<div  id="reply" class="ml-4"></div>
+<button onclick="reply({{$comment->id}},{{$comment->sender_id}},'{{ $comment->username  }}')" class="btn btn-outline-primary float-right ">
         Reply
     </button>
 
