@@ -18,37 +18,19 @@
         </p>
     </div>
 </div>
-<div  id="reply"></div>
+@forelse($replies as $reply)
+
+@if($reply->parent_comment_id == $comment->id)
+
+<div  id="reply">{{ $reply->comment }}</div>
+
+
+@endif
+@empty
+@endforelse
 <button onclick="reply({{$comment->id}},{{$comment->sender_id}},'{{ $comment->username  }}')" class="btn bg-alt text-white float-right ">
         Reply
     </button>
-
-    <script>
-    //const c = jQuery.noConflict();
-    $(document).ready(function (){
-      id ={{$comment->id}};
-      //function Getreply() {
-      const route = "{{ route('reply',['username'=>$user->username])  }}"
-      $.ajaxSetup({
-        headers:{
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-      })
-      //  setInterval(() => {
-      console.log(route);
-      $.ajax({
-        type:'GET',
-        url:route,
-        data:{id:id},
-        contentType:false,
-        processData:true,
-        success:function (data){
-          $('#reply'+id).html(data);
-        }
-      })
-      //}
-    });
-  </script>
 
 @empty
 <div class="post-content">This post has no comment yet.</div>

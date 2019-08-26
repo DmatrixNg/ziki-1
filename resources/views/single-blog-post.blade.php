@@ -111,7 +111,7 @@ const j = jQuery.noConflict();
             'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')
         }
      })
-  //  setInterval(() => {
+     setInterval(() => {
      j.ajax({
          type:'GET',
          url:route,
@@ -122,7 +122,7 @@ const j = jQuery.noConflict();
          }
      })
 
-    }, 1000);
+     }, 1000);
 
     const commentForm = document.querySelector('.commentForm');
     const commentBtn  = document.querySelector('button[name="comment"]');
