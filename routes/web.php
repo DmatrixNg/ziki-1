@@ -84,4 +84,6 @@ Route::prefix('{username}')->group(function () {
     Route::post('/notif','pageController@notification')->name('notif');
     Route::get('/notif','pageController@notification')->name('getNotif');
     Route::post('/edit-post','HomeController@editPost');
+    Route::get('/replies','pageController@reply')->name('reply');
+
 });
