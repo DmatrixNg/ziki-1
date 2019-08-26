@@ -22,7 +22,10 @@
 
 @if($reply->parent_comment_id == $comment->id)
 
-<div class="ml-5 pl-4" id="reply">{{ $reply->comment }}</div>
+<div class="ml-5 pl-4 " id="reply">
+    <img src="{{ $comment->image }}" class="img-fluid" style="border-radius:50%;object-fit:cover;" alt="user" width="40" height="45"/>
+    {{ $reply->comment }}
+</div>
 
 
 @endif
