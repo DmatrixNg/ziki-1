@@ -15,7 +15,7 @@
 </div>
 <button class="btn bg-alt text-white float-right">
         Reply
-    </button>
+</button>
 @empty
 <div class="post-content">This post has no comment yet.</div>
 @endforelse
