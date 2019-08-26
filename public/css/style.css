@@ -91,7 +91,7 @@ body {
     text-transform: uppercase;
 }
 
-.sidebar-nav ul li a:hover {
+.sidebar-nav ul li a:hover, .on-hover {
     color: #ffffff;
     background: var(--main-color);
     border-radius: 5px;

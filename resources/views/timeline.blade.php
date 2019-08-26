@@ -287,7 +287,7 @@ $location = 'timeline';
               <div class="post-content-body mb-0">
                 <span class="text-muted">{{$feeds['tags']}}</span>
                 <a href="{{URL::to('/')}}/{{$feeds['link']}}" class="no-decoration">
-                  <h5 class="font-weight-bold">{{$feeds['title']}}</h5>
+                  <h5 class="font-weight-bold on-hover">{{$feeds['title']}}</h5>
                 </a>
                 <p class="mb-1">
                   {{$feeds['des']}}
