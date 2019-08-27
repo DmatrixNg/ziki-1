@@ -13,18 +13,25 @@
 
            echo $created_at->format('M jS, Y h:i A');
           @endphp</small></p>
-        <p class="m-0">
-            {{$comment->comment}}
-        </p>
+        <div class="d-flex justify-content-between">
+            <p class="m-0">
+                {{$comment->comment}}
+            </p>
+            <button onclick="reply({{$comment->id}},{{$comment->sender_id}},'{{ $comment->username  }}')" class="btn font-weight-bold align-items-center text-secondary" style="font-size: 12px;">
+            Reply
+            </button>
+        </div>
     </div>
+    
 </div>
+
 @forelse($replies as $reply)
 
 @if($reply->parent_comment_id == $comment->id)
 
-<div class="ml-5 pl-4 d-flex align-items-center" id="reply">
-    <img src="{{ $comment->image }}" class="img-fluid mr-1" style="border-radius:50%;object-fit:cover;" alt="user" width="35" height="35"/>
-    <div>
+<div class="ml-5 pl-4 d-flex align-items-center mb-1" id="reply">
+    <img src="{{ $comment->image }}" class="img-fluid mr-2" style="border-radius:50%;object-fit:cover;" alt="user" width="35" height="35"/>
+    <div class="ml-1">
     <p class="font-weight-bold m-0" style="font-size: 13px;">
         {{ '@'.$comment->username  }} - 
         <small class="text-muted">@php
@@ -44,9 +51,7 @@
 @endif
 @empty
 @endforelse
-<button onclick="reply({{$comment->id}},{{$comment->sender_id}},'{{ $comment->username  }}')" class="btn btn-outline-primary float-right">
-        Reply
-    </button>
+
 
 @empty
 <div class="post-content">This post has no comment yet.</div>
