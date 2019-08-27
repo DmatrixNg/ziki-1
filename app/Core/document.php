@@ -1007,9 +1007,10 @@ $user = Auth::user();
     public function getPost($username,$postSlug){
     //  $user = $this->user($username);
       $user =   DB::table('users')->where('username', $username)->first();
-
+      echo $postSlug;
       $post = DB::table('posts')->where(['slug'=>$postSlug,'user_id'=>$user->id])->first();
-      if(!empty($post)) {
+      dd($post);
+if(!empty($post)) {
 
         $parsedown  = new Parsedown();
         $createdAt = Carbon::parse($post->created_at);
