@@ -1008,7 +1008,7 @@ $user = Auth::user();
     //  $user = $this->user($username);
       $user =   DB::table('users')->where('username', $username)->first();
 
-      $post = DB::table('posts')->where(['slug'=>strtolower(strip_tags(trim($postSlug))),'user_id'=>$user->id])->first();
+      $post = DB::table('posts')->where(['slug'=>$postSlug,'user_id'=>$user->id])->first();
       if(!empty($post)) {
 
         $parsedown  = new Parsedown();
