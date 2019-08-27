@@ -539,7 +539,6 @@ public function checker()
 
                 //  print_r($feed);
                 $user = DB::table('users')->where('username', $this->user)->first();
-               $slug = preg_replace("/(&#[0-9]+;)\?/", "", $slug);
                   foreach ($feed as $key => $value) {
 
                   //  dd($this->user."/post/" . strtolower(strip_tags($value['slug' ])));
@@ -550,7 +549,7 @@ public function checker()
                         'site_image'       => $user->image,
                         'title'            => strip_tags($value['title']),
                         'des'             =>  strip_tags($value['body']),
-                        'link'             => $this->user."/post/" . strtolower(strip_tags($value['slug' ])),
+                        'link'             => $this->user."/post/" . $value['slug' ],
                         'date'    => $value['date'],
                         'image'   => $value['image'],
                       ]);

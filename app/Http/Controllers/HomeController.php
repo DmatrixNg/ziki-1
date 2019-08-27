@@ -419,8 +419,21 @@ $slug = str_replace(' ', '-', $title);
 $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
 echo strip_tags($slug);
 }
+public function dropfeed()
+{
 
+  $c = \Lucid\extfeeds::getQuery()->delete();
+  print_r($c);
+}
+public function loadfeed($user)
+{
 
+$post = new \Lucid\Core\Document($user);
+$post = $post->fetchAllRss();
+//dd($post );
+
+print_r($post);
+}
     public function saveComment(Request $request, $username) {
 
           $user_id = Auth::user()->id;
