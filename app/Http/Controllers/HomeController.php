@@ -82,7 +82,8 @@ foreach ($get as $key => $value) {
     {
       echo "Initiating Fix";
      $fix = new \Lucid\Core\Subscribe(Auth::user()->username);
-      $fix = $fix->fix();
+     
+      //$fix = $fix->fix();
     }
     public function timeline($username)
     {
