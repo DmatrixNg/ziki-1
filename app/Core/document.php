@@ -191,6 +191,9 @@ class Document
         }
 
         $slug = str_replace(' ', '-', $title);
+        $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+        $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
+        //$slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
         $oldpost = DB::table('posts')->where('id',$post_id)->first('title');
       //  dd($oldpost->title);
         $updateFeeds = DB::table('extfeeds')->where('title',$oldpost->title)
@@ -199,9 +202,9 @@ class Document
           'des'=>$content,
           'tags'=>$tags,
           'image'=> $image,
+          'links'=> strtolower($slug)
+
         ]);
-        $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
-        $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
         $updatePosts = DB::table('posts')->where('id',$post_id)->update([
           'user_id'=>Auth::user()->id,
           'title'=>$title,
@@ -536,6 +539,7 @@ public function checker()
 
                 //  print_r($feed);
                 $user = DB::table('users')->where('username', $this->user)->first();
+               $slug = preg_replace("/(&#[0-9]+;)\?/", "", $slug);
                   foreach ($feed as $key => $value) {
 
                   //  dd($this->user."/post/" . strtolower(strip_tags($value['slug' ])));
@@ -1014,7 +1018,7 @@ $user = Auth::user();
         $content['title'] =$post->title;
         $content['body'] = $parsedown->text($post->content);
         $content['date'] = $createdAt->format('M jS, Y h:i A');
-        $content['slug'] = $this->clean($post->slug);
+        $content['slug'] = $post->slug;
         $content['id'] = $post->id;
         return $content;
 
@@ -1070,7 +1074,7 @@ $user = Auth::user();
             $content['title'] = $post->title;
             $content['body']  = $this->trim_words($postContent, 200);
             $content['tags']  = $post->tags;
-            $content['slug']  = $this->clean($post->slug);
+            $content['slug']  = $post->slug;
             $content['image'] = $first_img;
             $content['date']  =  $createdAt->format('M jS, Y h:i A');;
             $content['id'] = $post->id;

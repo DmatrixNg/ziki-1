@@ -82,7 +82,7 @@ foreach ($get as $key => $value) {
     {
       echo "Initiating Fix";
      $fix = new \Lucid\Core\Subscribe(Auth::user()->username);
-     
+
       //$fix = $fix->fix();
     }
     public function timeline($username)
@@ -399,6 +399,26 @@ return true;
       }
 
     }
+public function checkpost($value)
+{
+   $post = DB::table('posts')->where('id',$value)->first();
+ echo "title: ".$post->title."</br>" ;
+ echo "id: ".$post->id."</br>";
+ echo "user_id: ".$post->user_id."</br>";
+ echo "content: ".$post->content."</br>";
+ echo "slug: ".$post->slug."</br>";
+//print_r( $post);
+echo "feed</br></br></br></br>";
+$post = DB::table('extfeeds')->where('title',$post->title)->first();
+echo "post:title ".$post->title."</br>";
+echo "post:slug ".$post->link."</br>";
+
+$title = "this is live?";
+$slug = str_replace(' ', '-', $title);
+
+$slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+echo strip_tags($slug);
+}
 
 
     public function saveComment(Request $request, $username) {
