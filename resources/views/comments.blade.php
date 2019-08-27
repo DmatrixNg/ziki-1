@@ -5,7 +5,7 @@
 <ul style="padding: initial;">
 @forelse($comments as $comment)
 
-<div class="post-content mt-3 mb-2 pb-0">
+<div class="post-content mt-4 mb-2 pb-0">
     <img src="{{ $comment->image }}" class="img-fluid" style="border-radius:50%;object-fit:cover;" alt="user" width="55" height="56"/>
     <div class="post-content-body">
     <p class="font-weight-bold m-0">{{ '@'.$comment->username  }} - <small class="text-muted">@php
@@ -13,42 +13,45 @@
 
            echo $created_at->format('M jS, Y h:i A');
           @endphp</small></p>
-        <p class="m-0">
-            {{$comment->comment}}
-        </p>
+        <div class="d-flex justify-content-between">
+            <p class="m-0">
+                {{$comment->comment}}
+            </p>
+            <button onclick="reply({{$comment->id}},{{$comment->sender_id}},'{{ $comment->username  }}')" class="btn font-weight-bold align-items-center text-secondary" style="font-size: 12px;">
+            Reply
+            </button>
+        </div>
     </div>
+    
 </div>
-<div  id="reply"></div>
-<button onclick="reply({{$comment->id}},{{$comment->sender_id}},'{{ $comment->username  }}')" class="btn bg-alt text-white float-right ">
-        Reply
-    </button>
 
-    <script>
-    //const c = jQuery.noConflict();
-    $(document).ready(function (){
-      id ={{$comment->id}};
-      //function Getreply() {
-      const route = "{{ route('reply',['username'=>$user->username])  }}"
-      $.ajaxSetup({
-        headers:{
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-      })
-      //  setInterval(() => {
-      console.log(route);
-      $.ajax({
-        type:'GET',
-        url:route,
-        data:{id:id},
-        contentType:false,
-        processData:true,
-        success:function (data){
-          $('#reply'+id).html(data);
-        }
-      })
-      //}
-    });
-  </script>
+@forelse($replies as $reply)
+
+@if($reply->parent_comment_id == $comment->id)
+
+<div class="ml-5 pl-4 d-flex align-items-center mb-1" id="reply">
+    <img src="{{ $comment->image }}" class="img-fluid mr-2" style="border-radius:50%;object-fit:cover;" alt="user" width="35" height="35"/>
+    <div class="ml-1">
+    <p class="font-weight-bold m-0" style="font-size: 13px;">
+        {{ '@'.$comment->username  }} - 
+        <small class="text-muted">@php
+        $created_at = $carbon->parse($comment->created_at);
+
+        echo $created_at->format('M jS, Y h:i A');
+        @endphp</small>
+    </p>
+    <p style="font-size: 13px;margin-bottom: 0;">
+        {{ $reply->comment }}
+    </p>
+    </div>
+    
+</div>
+
+
+@endif
+@empty
+@endforelse
+
 
 @empty
 <div class="post-content">This post has no comment yet.</div>

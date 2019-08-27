@@ -438,9 +438,15 @@ class pageController extends Controller
                 ->get();
     $carbon =  new Carbon;
   //  dd($comments);
-  $user = $this->user($username);
-    return view('comments')->with(['comments'=>$comments,"user"=> $user,'carbon'=>$carbon]);
-
+    $replies = DB::table('notifications')
+            ->join('users','notifications.sender_id','=','users.id')
+            ->select('notifications.*','users.username','users.email','users.image')
+            ->where('notifications.post_id',$post_id)
+            ->where('notifications.parent_comment_id','!=',null)
+            ->orderBy('notifications.id','DESC')
+            ->get();
+     $user = $this->user($username);
+     return view('comments')->with(['comments'=>$comments,"user"=> $user,'carbon'=>$carbon,'replies'=>$replies]);
   }
 
   public function reply(Request $request) {
