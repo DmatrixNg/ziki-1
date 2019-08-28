@@ -5,6 +5,7 @@ namespace Lucid\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 use Validator;
 use DB;
 use Storage;
@@ -399,6 +400,8 @@ return true;
       }
 
     }
+
+    // debuging tools
 public function checkpost($value)
 {
    $post = DB::table('posts')->where('id',$value)->first();
@@ -413,11 +416,11 @@ $post = DB::table('extfeeds')->where('title',$post->title)->first();
 echo "post:title ".$post->title."</br>";
 echo "post:slug ".$post->link."</br>";
 
-$title = "this is live?";
-$slug = str_replace(' ', '-', $title);
+$title = "this is live.com live?";
+//$slug = str_replace(' ', '-', $title);
 
-$slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
-echo strip_tags($slug);
+
+echo Str::slug($title);
 }
 public function dropfeed()
 {
@@ -434,6 +437,26 @@ $post = $post->fetchAllRss();
 
 print_r($post);
 }
+
+public function postFixer()
+{
+  $oldpost = DB::table('posts')->get();
+  foreach ($oldpost as $key => $value) {
+  //  dd($value->title);
+    $slug = Str::slug($value->title);
+    $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
+
+    $updateFeeds = DB::table('posts')->where(['title'=>$value->title, 'user_id' => $value->user_id])
+    ->update([
+      'slug'=> $slug
+    ]);
+  }
+//  dd($oldpost->title);
+
+print_r($updateFeeds);
+}
+
+//end of debuging tools
     public function saveComment(Request $request, $username) {
 
           $user_id = Auth::user()->id;

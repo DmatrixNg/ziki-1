@@ -5,6 +5,7 @@ use Parsedown;
 use Mni\FrontYAML\Parser;
 use KzykHys\FrontMatter\FrontMatter;
 use Symfony\Component\Finder\Finder;
+use Illuminate\Support\Str;
 use KzykHys\FrontMatter\Document as Doc;
 use Auth;
 use DB;
@@ -149,8 +150,8 @@ class Document
         $image = null;
       }
 
-      $slug = str_replace(' ', '-', $title);
-      $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+
+      $slug = Str::slug($title);
       $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
       $insertPosts = DB::table('posts')->insert([
         'user_id'=>Auth::user()->id,
@@ -158,7 +159,7 @@ class Document
         'content'=>$content,
         'tags'=>$tags,
         'image'=> $image,
-        'slug'=>$this->clean(strtolower($slug))
+        'slug'=> $slug
       ]);
 
       if ($insertPosts) {
@@ -189,8 +190,7 @@ class Document
           $image = null;
         }
 
-        $slug = str_replace(' ', '-', $title);
-        $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+        $slug = Str::slug($title);
         $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
         //$slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
         $oldpost = DB::table('posts')->where('id',$post_id)->first('title');
@@ -201,7 +201,7 @@ class Document
           'des'=>$content,
           'tags'=>$tags,
           'image'=> $image,
-          'links'=> strtolower($slug)
+          'links'=> $slug
 
         ]);
         $updatePosts = DB::table('posts')->where('id',$post_id)->update([
@@ -210,7 +210,7 @@ class Document
           'content'=>$content,
           'tags'=>$tags,
           'image'=> $image,
-          'slug'=>strtolower($slug)
+          'slug'=> $slug
         ]);
 
         //dd($updateFeeds);
@@ -308,8 +308,7 @@ class Document
 
             foreach ($posts as $key => $value) {
               $title = strip_tags($value['title']);
-              $slug = str_replace(' ', '-', $title);
-              $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+              $slug = Str::slug($title);
               $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
 
               $insertPosts = DB::table('posts')->insert([
@@ -318,7 +317,7 @@ class Document
                 'content'=> $value['body'],
                 'tags'=>$value['tags'],
                 'image'=> $value['image'],
-                'slug'=>strtolower($slug)
+                'slug'=>$slug
               ]);
 
 
