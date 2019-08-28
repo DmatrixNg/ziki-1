@@ -150,7 +150,6 @@ class Document
       }
 
       $slug = str_replace(' ', '-', $title);
-
       $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
       $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
       $insertPosts = DB::table('posts')->insert([
@@ -159,7 +158,7 @@ class Document
         'content'=>$content,
         'tags'=>$tags,
         'image'=> $image,
-        'slug'=>strtolower($slug)
+        'slug'=>$this->clean(strtolower($slug))
       ]);
 
       if ($insertPosts) {
@@ -1007,10 +1006,10 @@ $user = Auth::user();
     public function getPost($username,$postSlug){
     //  $user = $this->user($username);
       $user =   DB::table('users')->where('username', $username)->first();
-      echo $postSlug;
+    //   echo $postSlug;
       $post = DB::table('posts')->where(['slug'=>$postSlug,'user_id'=>$user->id])->first();
-      dd($post);
-if(!empty($post)) {
+    //   dd($post);
+      if(!empty($post)) {
 
         $parsedown  = new Parsedown();
         $createdAt = Carbon::parse($post->created_at);

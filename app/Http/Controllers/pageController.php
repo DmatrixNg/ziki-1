@@ -109,6 +109,7 @@ class pageController extends Controller
     }
 
     public function singlePostPage($username,$postSlug){
+      // return $postSlug;
         if(!$this->user($username)) {
             return abort(404);
         }
