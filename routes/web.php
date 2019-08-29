@@ -38,6 +38,7 @@ Route::get('oldfeed','HomeController@old');
 Route::get('newfeed','HomeController@new');
 
 
+
 Route::get('under-construction', 'pageController@construction')->name('under-construction');
 Route::get('microblog','HomeController@microblog');
 Route::post('save-post','HomeController@savePost');

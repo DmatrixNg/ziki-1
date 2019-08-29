@@ -51,7 +51,7 @@ class Subscribe
   {
     $this->img = $value;
   }
-  public function fix()
+    public function fix()
   {
     $getc = DB::table('ext_rsses')->get();
     $get = DB::table('ext_rsses')->take(500)->get();
@@ -80,6 +80,7 @@ if (DB::table('users')->where('name', $value->title)->exists() == 1) {
   //  var_dump($action);
 //return;
   }
+    
 public function extract($url)
 {
   $rss = new \DOMDocument();

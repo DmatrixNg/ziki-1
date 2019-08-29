@@ -61,7 +61,7 @@ class HomeController extends Controller
         return view('home', ['fcheck' => $fcheck, 'posts' => $feed,'fcount'=>$fcount, 'count' => $count]);
 
     }
-public function Old()
+    public function Old()
 {
   $get = DB::table('ext_rsses')->get();
   print_r("total of ". count($get)."</br></br></br>");
