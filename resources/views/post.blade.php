@@ -250,7 +250,7 @@ $location= 'post';
 
   .tokenfield {
     padding: 7px;
-    
+
   }
   .ui-front {
     z-index: 9999999 !important;
@@ -469,7 +469,7 @@ $location= 'post';
   function deletePost(post_id) {
     j('#deleteBtn').on('click',function(e){
      e.preventDefault();
-      
+
      const formData = new FormData(document.querySelector('.delete-form'));
      formData.set('post_id',post_id);
      j.ajax({

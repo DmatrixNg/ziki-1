@@ -310,7 +310,7 @@ class Document
               $title = strip_tags($value['title']);
               $slug = Str::slug($title);
               $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
-              if(DB::table('posts')->where(['title' , $title, 'user_id' = Auth::user()->id])->exists() ==1){
+              if(DB::table('posts')->where(['title' => $title, 'user_id' => Auth::user()->id])->exists() ==1){
                 $updatePosts = DB::table('posts')->update([
                   'content'=> $value['body']
                 ]);
