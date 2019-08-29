@@ -12,13 +12,13 @@
   @endauth
   <!-- <title>{{ config('app.name', 'Lucid') }}</title> -->
   <title>@yield('title')</title>
-  <link rel="short icon" type="image/png" sizes="16x16" href="{{ asset('img/luci-logo.png') }}">
+  <link rel="short icon" type="image/png" sizes="16x16" href="{{ secure_asset('img/luci-logo.png') }}">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet" />
-  <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-  <link href="{{ asset('css/main-style.css') }}" rel="stylesheet">
-  <link href="{{ asset('css/tabletcss.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('css/style.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('css/main-style.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('css/tabletcss.css') }}" rel="stylesheet">
   <link href="https://cdn.quilljs.com/1.3.4/quill.snow.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.min.css">
@@ -108,7 +108,7 @@
             <li class="w-100 text-center"><a class="@if($location ==  'post') active-nav @endif changeHref" href="/{{ $user->username}}">Posts</a></li>
             @endif
             <li class="w-100 text-center"><a class="@if($location ==  'thoughts') active-nav @endif changeHref" href="/{{ $user->username}}/thoughts">Thoughts</a></li>
-            <!-- <li class="w-100 text-center"><a class="@if($location ==  'video') active-nav @endif changeHref" href="{{ route('under-construction') }}">Videos</a></li> -->
+            <!-- <li class="w-100 text-center"><a class="@if($location ==  'video') active-nav @endif changeHref" href="{{ secure_url('under-construction') }}">Videos</a></li> -->
             <li class="w-100 text-center"><a class="@if($location ==  'contact') active-nav @endif changeHref" href="/{{ $user->username}}/contact">Contact</a></li>
           </ul>
         </div>
@@ -140,7 +140,7 @@
             @endif
           </div>
           <div class="mt-3">
-            <a href="https://lucid.blog"> <small class="text-muted"><img src="{{ asset('img/logo.jpg') }}" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" /> Powered by Lucid</small></a>
+            <a href="https://lucid.blog"> <small class="text-muted"><img src="{{ secure_asset('img/logo.jpg') }}" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" /> Powered by Lucid</small></a>
           </div>
         </div>
       </div>
@@ -158,7 +158,7 @@
                 <br>
                 <h4 class="text-main">Unfollow {{$user->name}}</h4>
                 <p class="small"><em>Are you sure you want to Unfollow {{$user->name}} and miss out interesting post?<br /> Click the button below to unfollow</em></p>
-                <form method="POST" action="{{URL::to('/')}}/{{$user->username}}/unfollow">
+                <form method="POST" action="{{secure_url('/')}}/{{$user->username}}/unfollow">
                   @csrf
                   <input type="hidden" name="rss" value="{{$user->name}}">
                   <button type="submit" class="btn btn-primary">UnFollow</button>
@@ -181,7 +181,7 @@
                 <br>
                 <h4 class="text-main">Follow {{$user->name}}</h4>
                 <p class="small"><em>Do you have or would love to have Lucid installed on your domain?<br /> Click the button below to follow me</em></p>
-                <form method="POST" action="{{URL::to('/')}}/{{$user->username}}/addrss">
+                <form method="POST" action="{{secure_url('/')}}/{{$user->username}}/addrss">
                   @csrf
                   <input type="hidden" name="rss" value="{{$user->username}}">
                   <button type="submit" class="btn btn-primary">Follow me on Lucid</button>
@@ -207,7 +207,7 @@
           @guest
           @else
         <div class="dropdown">
-            <a class="mr-5 pr-4 notification text-main" id="load" role="button" id="dropdownNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon ion-md-notifications" style="font-size: 1.8em"></i>
+            <a class="mr-5 pr-4 notification text-main" id="load" role="button" id="dropdownNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon ion-md-notifications cursor-pointer" style="font-size: 1.8em;"></i>
               <span class="badge badge-danger count"></span>
               <span class="sr-only">unread notifications</span></a>
             <div class="dropdown-menu dropdown-menu-right notification-menu" aria-labelledby="dropdownNotification">
@@ -217,17 +217,17 @@
                   <div class="spinner" style=" padding: 20px;  width: 2vw;
     height: 2vw;"></div>
                 </div>
-              <a href="{{ route('under-construction') }}" class="font-weight-bold mx-2 mt-3">View all</a>
+              <a href="{{ secure_url('under-construction') }}" class="font-weight-bold mx-2 mt-3">View all</a>
             </div>
           </div>
             @endguest
           <div class="dropdown" id="lucid-dropdown">
-            <a class="nav-link dropdown-toggle pt-1" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img src="{{ asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
+            <a class="nav-link dropdown-toggle pt-1 cursor-pointer" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img src="{{ secure_asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               @guest
-              <a class="dropdown-item" href="{{ url('/login') }}">{{ __('Login') }}</a>
+              <a class="dropdown-item" href="{{ secure_url('/login') }}">{{ __('Login') }}</a>
               @else
               <a class="dropdown-item changeHref" href="/{{ Auth::user()->username}}">Home</a>
               <a href="/{{ $user->username}}/settings" class="dropdown-item changeHref">Settings</a>
@@ -333,7 +333,7 @@
 <script>
 const s = jQuery.noConflict();
  s(document).ready(function (){
-    const check = "{{ route('notif',['username'=>$user->username])  }}"
+    const check = "{{ secure_url($user->username.'/notif')  }}"
 
 function load_unseen_notification(view = '')
 {
@@ -363,7 +363,7 @@ s.ajax({
     //console.log('Fetch Error :-S', err);
     });
   }
-  const view_notif = "{{ route('getNotif',['username'=>$user->username])  }}"
+  const view_notif = "{{ secure_url($user->username.'/notif')  }}"
 
   s(document).on('click', '#load', function(){
   view = "";
@@ -381,9 +381,9 @@ s.ajax({
   });
 });
 
-  setInterval(function(){
+//  setInterval(function(){
 load_unseen_notification();
-}, 2000);
+//}, 2000);
 
 s(document).on('click', '#notif', function(){
  s('.count').html('');

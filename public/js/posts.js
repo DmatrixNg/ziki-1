@@ -1,16 +1,17 @@
 let j = jQuery.noConflict();
 
   var toolbarOptions = [
-    ['bold', 'italic'],
-    ['blockquote'],
-    [{
-      'list': 'ordered'
-    }, {
-      'list': 'bullet'
-    }],
-    [{
-      'header': [1, 2, 3, 4, 5, 6, false]
-    }],
+    ['bold', 'italic','underline', 'strike'],
+    ['blockquote', 'code-block'],
+ [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+ [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+ [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+
+ [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+ [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+ [{ 'font': [] }],
+ [{ 'align': [] }],
     ['link', 'image'],
     ['clean']
   ];
@@ -115,9 +116,12 @@ let j = jQuery.noConflict();
             data:formData,
             contentType: false,
             processData: false,
+            beforeSend:function(){
+              j('.publishBtn').text('Publishing...');
+            },
             success : function (res) {
-              console.log(JSON.stringify(res));
-
+              // console.log(JSON.stringify(res));
+              j('.publishBtn').text('Published');
                 if (res.error == false && res.action == 'publish') {
                   window.localStorage.setItem('publish', 'success');
                   window.location = '/'+j('meta[name="username"]').attr('content')+'/posts';
@@ -126,6 +130,10 @@ let j = jQuery.noConflict();
                   window.localStorage.setItem('savedToDrafts', 'success');
                   window.location = '/'+j('meta[name="username"]').attr('content')+'/posts';
                 }
+            },
+            error:function(error){
+              j('.publishBtn').text('Publish');
+              console.log(error.statusText);
             }
         });
 

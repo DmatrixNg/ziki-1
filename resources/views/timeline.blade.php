@@ -257,30 +257,19 @@ $location = 'timeline';
 <!-- Begin content -->
 <!-- Timeline Page -->
 <div>
-    <h4 class="ml-4 mb-3 pl-1">Explore Lucid</h4>
+    <!-- <h4 class="ml-4 mb-3 pl-1">Explore Lucid</h4> -->
     <!-- Begin content -->
     <div class="page-tab ml-4 mb-3">
       <ul class="nav nav-tabs navbar-light" id="follow-tabs" role="tablist">
-      <li class="nav-item">
-          <a href="#timeline" class="nav-link tab-link active ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="category" aria-selected="">
-            <h6>Timeline</h6>
-          </a>
-        </li>
         <li class="nav-item">
-          <a href="#category" class="nav-link tab-link ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="category" aria-selected="false">
-            <h6>Category</h6>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#page" class="nav-link tab-link ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="posts" aria-selected="false">
-            <h6>Posts</h6>
-          </a>
+            <a href="#timeline" class="nav-link tab-link active" data-toggle="tab" role="tab" aria-controls="category" aria-selected="">
+              <h6 class="mb-0">Timeline</h6>
+            </a>
         </li>
       </ul>
     </div>
     <div class="tab-content">
         <!-- timeline page -->
-
         <div class="tab-pane show active" role="tabpanel" id="timeline">
         <div class="row mt-5">
           <div class="col-md-12">
@@ -289,15 +278,16 @@ $location = 'timeline';
             @foreach ($posts as $feeds)
             <div class="post-content">
               <!--           @if (empty($feeds['site_image']))
-                  <img src="{{ asset('img/logo.jpg') }}" class="img-fluid img-thumb" alt="user" />
+                  <img src="{{ secure_asset('img/logo.jpg') }}" class="img-fluid img-thumb" alt="user" />
                   @else
                   <img src="{{ $feeds['site_image']}}" class="img-fluid img-thumb" alt="user" />
                   @endif -->
-              <img src="{{$user->image}}" class="timeline-img" alt={{ $user->name}} />
+
+              <img src="{{$feeds['site_image']}}" class="timeline-img" alt="{{$feeds['site']}}" />
               <div class="post-content-body mb-0">
-                <span class="text-muted">Technology</span>
-                <a href="{{URL::to('/')}}/{{$feeds['link']}}" class="no-decoration">
-                  <h5 class="font-weight-bold">{{$feeds['title']}}</h5>
+                <span class="text-muted">{{$feeds['tags']}}</span>
+                <a href="{{secure_url('/')}}/{{$feeds['link']}}" class="no-decoration">
+                  <h5 class="font-weight-bold on-hover">{{$feeds['title']}}</h5>
                 </a>
                 <p class="mb-1">
                   {{$feeds['des']}}
@@ -305,7 +295,7 @@ $location = 'timeline';
                 <div class="row">
                   <span class="col-6 col-sm-6 col-md-8">
                     <small>
-                    <a href="{{$feeds['site']}}" class="text-muted">{{$feeds['site']}}</a>
+                    <a href="{{secure_url('/')}}/{{$feeds['username']}}" class="text-muted">{{$feeds['site']}}</a>
                     <span class="font-weight-bold">.</span>
                     <span class="text-muted">{{$feeds['date']}}</span>
                     </small>
@@ -318,8 +308,8 @@ $location = 'timeline';
                       </button>
                     </span>
                     <a href="" class="mr-1"><i class="icon ion-md-heart text-danger" style="font-size: 1.2em;"></i> 5</a>
-                    <a href="{{URL::to('/')}}/{{$feeds['link']}}"><i class="icon ion-md-text text-primary" style="font-size: 1.2em;"></i> 5</a>
-                  </span>
+                    <a href="{{secure_url('/')}}/{{$feeds['link']}}"><i class="icon ion-md-text text-primary" style="font-size: 1.2em;"></i> 5</a>
+                  </span>  -->
                 </div>
               </div>
             </div>
@@ -329,85 +319,103 @@ $location = 'timeline';
         </div>
          <!-- End timeline Page -->
       <!-- Category Page -->
-      <div class="tab-pane show" role="tabpanel" id="category">
+      <!-- <div class="tab-pane show" role="tabpanel" id="category">
         <div class="row p-3 m-0">
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/politics.png') }}" class="w-100" alt="politics" />
+            <img src="{{ secure_asset('img/politics.png') }}" class="w-100" alt="politics" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Politics</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/sports.png') }}" class="w-100" alt="sports" />
+            <img src="{{ secure_asset('img/sports.png') }}" class="w-100" alt="sports" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Sports</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/health.png') }}" class="w-100" alt="health" />
+            <img src="{{ secure_asset('img/health.png') }}" class="w-100" alt="health" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Health</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/technology.png') }}" class="w-100" alt="technology" />
+            <img src="{{ secure_asset('img/technology.png') }}" class="w-100" alt="technology" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Technology</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/music.png') }}" class="w-100" alt="music" />
+            <img src="{{ secure_asset('img/music.png') }}" class="w-100" alt="music" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Music</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/lifestyle.png') }}" class="w-100" alt="music" />
+            <img src="{{ secure_asset('img/lifestyle.png') }}" class="w-100" alt="music" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Lifestyle</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/movies.png') }}" class="w-100" alt="movies" />
+            <img src="{{ secure_asset('img/movies.png') }}" class="w-100" alt="movies" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Movies</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/fitness.png') }}" class="w-100" alt="fitness" />
+            <img src="{{ secure_asset('img/fitness.png') }}" class="w-100" alt="fitness" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Fitness</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- End Category Page -->
 
       <!-- Posts Page -->
-      <div class="tab-pane" role="tabpanel" id="page">
+      <!-- <div class="tab-pane" role="tabpanel" id="page">
         <div class="row mx-3">
           <div class="col-xs-12 grid">
-          <select name="" id="" class="float-right bg-alt drop text-white">
-            <option value="">
-              fitness
+          <select name="" id="" class="float-right bg-alt drop text-white px-2 py-1 border-0">
+            <option class="text-dark bg-white cursor-pointer" value="all" selected>
+              All
             </option>
-            <option value="">
-              technology
+            <option class="text-dark bg-white cursor-pointer" value="fitness">
+              Fitness
             </option>
-            <option value="">
-              nutrition
+            <option class="text-dark bg-white cursor-pointer" value="technology">
+              Technology
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="health">
+              Health
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="politics">
+              Politics
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="sports">
+              Sports
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="movies">
+              Movies
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="music">
+              Music
+            </option>
+            <option class="text-dark bg-white cursor-pointer" value="lifestyle">
+              Lifestyle
             </option>
           </select>
           <div class="post-content mt-5 ">
-              <img src="{{ asset('img/mb-1.png') }}" class="img-fluid" alt="user" />
+              <img src="{{ secure_asset('img/mb-1.png') }}" class="img-fluid" alt="user" />
               <div class="post-content-body">
                 <h5 class="font-weight-bold">Maybe You Don't Need Kubernetes</h5>
                 <p class="">
@@ -418,7 +426,7 @@ $location = 'timeline';
             </div>
 
             <div class="post-content">
-              <img src="{{ asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
+              <img src="{{ secure_asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
               <div class="post-content-body">
                 <h5 class="font-weight-bold">What Is Rust Doing Behind the Curtains? </h5>
                 <p class="">
@@ -429,7 +437,7 @@ $location = 'timeline';
             </div>
 
             <div class="post-content">
-              <img src="{{ asset('img/mb-3.png') }}" class="img-fluid" alt="user" />
+              <img src="{{ secure_asset('img/mb-3.png') }}" class="img-fluid" alt="user" />
               <div class="post-content-body">
                 <h5 class="font-weight-bold">The Unreasonable Effectiveness of Excel Macros</h5>
                 <p class="">
@@ -440,7 +448,7 @@ $location = 'timeline';
             </div>
 
             <div class="post-content">
-              <img src="{{ asset('img/mb-1.png') }}" class="img-fluid" alt="user" />
+              <img src="{{ secure_asset('img/mb-1.png') }}" class="img-fluid" alt="user" />
               <div class="post-content-body">
                 <h5 class="font-weight-bold">Switching from a German to a US Keyboard Layout - Is It Worth It? </h5>
                 <p class="">
@@ -451,7 +459,7 @@ $location = 'timeline';
             </div>
 
             <div class="post-content">
-              <img src="{{ asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
+              <img src="{{ secure_asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
               <div class="post-content-body">
                 <h5 class="font-weight-bold">fastcat - A Faster `cat` Implementation Using Splice</h5>
                 <p class="">
@@ -461,11 +469,11 @@ $location = 'timeline';
               </div>
             </div>
           </div>
-          <!-- <div class="col-xs-12 col-md-4 bg-light" style="height: 30vh;">
+          < <div class="col-xs-12 col-md-4 bg-light" style="height: 30vh;">
             <p class="font-weight-bold">Popular Topics</p>
           </div> -->
-        </div>
-      </div>
+        <!-- </div>
+      </div> -->
       <!-- End Posts page -->
     </div>
 <!-- End Timeline Page -->

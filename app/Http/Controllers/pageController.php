@@ -99,8 +99,17 @@ class pageController extends Controller
 
     }
 
+    public function getPostData($username,$postSlug) {
+      $app = new \Lucid\Core\Document($username);
+      $post=$app->getPost($username,$postSlug);
+      if(!$post){
+          return response()->json(['error'=>'post not found'],404);
+      }
+      return response()->json(['data'=>$post]);
+    }
 
     public function singlePostPage($username,$postSlug){
+      // return $postSlug;
         if(!$this->user($username)) {
             return abort(404);
         }
@@ -174,7 +183,7 @@ class pageController extends Controller
 
             $user = $this->user($username);
             $app  = new \Lucid\Core\Document($username);
-            $posts=$app->getPosts();
+            $posts=$app->fetchAllRss();
 
             //dd($posts);
             // follower and following Count
@@ -247,7 +256,7 @@ class pageController extends Controller
         $contact = DB::table('contact_settings')->where('user_id',$user->id)->first();
 
 
-        return view('contact',compact('user','posts','contact'), ['fcheck' => $fcheck, 'fcount'=>$fcount, 'count' => $count ]);
+        return view('contact',compact('user','contact'), ['fcheck' => $fcheck, 'fcount'=>$fcount, 'count' => $count ]);
     }
 
 
@@ -425,10 +434,35 @@ class pageController extends Controller
                 ->join('users','notifications.sender_id','=','users.id')
                 ->select('notifications.*','users.username','users.email','users.image')
                 ->where('notifications.post_id',$post_id)
+                ->where('notifications.parent_comment_id','=',null)
                 ->orderBy('notifications.id','DESC')
                 ->get();
     $carbon =  new Carbon;
-    return view('comments')->with(['comments'=>$comments,'carbon'=>$carbon]);
+  //  dd($comments);
+    $replies = DB::table('notifications')
+            ->join('users','notifications.sender_id','=','users.id')
+            ->select('notifications.*','users.username','users.email','users.image')
+            ->where('notifications.post_id',$post_id)
+            ->where('notifications.parent_comment_id','!=',null)
+            ->orderBy('notifications.id','DESC')
+            ->get();
+          //  dd(  $replies);
+     $user = $this->user($username);
+     return view('comments')->with(['comments'=>$comments,"user"=> $user,'carbon'=>$carbon,'replies'=>$replies]);
+  }
+
+  public function reply(Request $request) {
+//dd($request->id);
+    $replies = DB::table('notifications')
+                ->join('users','notifications.sender_id','=','users.id')
+                ->select('notifications.*','users.username','users.email','users.image')
+                ->where('notifications.parent_comment_id','=',$request->id)
+                //->where('notifications.post_id',$post_id)
+                ->orderBy('notifications.id','DESC')
+                ->get();
+    $carbon =  new Carbon;
+   //dd($replies);
+    return view('reply')->with(['replies'=>$replies,'carbon'=>$carbon]);
 
   }
   public function notification(Request $request, $username)
@@ -449,13 +483,13 @@ class pageController extends Controller
                 ->where('sender_id', "!=", Auth::user()->id)
                 ->get();
 
-              //  dd($notif);
+                //dd($notif);
     $output = '';
   if (count($notif) > 0) {
 
     foreach ($notif as $notifs) {
-      if ($notifs->type == "Post") {
 
+      if ($notifs->type == "Post") {
     $notif = DB::table('notifications')
                 ->join('users','notifications.sender_id','=','users.id')
                 ->join('posts','notifications.post_id','=','posts.id')
@@ -465,38 +499,48 @@ class pageController extends Controller
                 ->orderBy('notifications.id','DESC')
                 ->first();
 
-//dd();
-    if ($notifs->action == 'Commented') {
+              //  dd($notif);
+    if ($notif->action == 'Commented') {
+      //  foreach ($notif as $notifs) {
             $output .='
             <div class="post-content border p-3">
               <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
               <div class="post-content-body">
-                <a class="m-0 font-weight-bold" href="'.URL::to('/').'/'.$notif->username.'">'.$notif->username.'</a> commented on your post <a href="'.URL::to('/').'/'.Auth::user()->username.'/post/'.$notif->slug.'" class="font-weight-bold">'.$notif->title.'</a>
+                <a class="m-0 font-weight-bold" href="'.secure_url('/').'/'.$notif->username.'">'.$notif->username.'</a> commented on your post <a href="'.secure_url('/').'/'.Auth::user()->username.'/post/'.$notif->slug.'" class="font-weight-bold">'.$notif->title.'</a>
               </div>
             </div>';
 
-          }
+          //}
 
   }
+  if ($notif->action == 'Replied') {
+    //  foreach ($notif as $notifs) {
+          $output .='
+          <div class="post-content border p-3">
+            <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
+            <div class="post-content-body">
+              <a class="m-0 font-weight-bold" href="'.secure_url('/').'/'.$notif->username.'">'.$notif->username.'</a> Replied your comment on <a href="'.secure_url('/').'/'.Auth::user()->username.'/post/'.$notif->slug.'" class="font-weight-bold">'.$notif->title.'</a>
+            </div>
+          </div>';
+
+        //}
+
+}
+}
     if ($notifs->type == 'Following') {
-      $notif = DB::table('notifications')
-                  ->join('users','notifications.sender_id','=','users.id')
-                  ->select('notifications.*', 'users.username','users.email','users.image')
-                  ->where(['notifications.user_id' => Auth::user()->id] )
-                  ->where('notifications.sender_id', "!=", Auth::user()->id)
-                  ->orderBy('notifications.id','DESC')
-                  ->first();
-                //  dd($notif);
+      $user= DB::table('users')->where('id', $notifs->sender_id)->first();
 
             $output .='
             <div class="post-content border p-3">
-              <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
+              <img src="'.$user->image.'" class="img-fluid img-thumb" alt="user" />
               <div class="post-content-body">
-                <a class="m-0 font-weight-bold" href="'.URL::to('/').'/'.$notif->username.'">'.$notif->username.'</a> is now Following you
+                <a class="m-0 font-weight-bold" href="'.secure_url('/').'/'.$user->username.'">'.$user->username.'</a> is now Following you
               </div>
             </div>';
 }
-    }
+//dd($output);
+}
+
 
   }else{
         $output .= '
@@ -523,5 +567,49 @@ class pageController extends Controller
     }
 
 
+  public function filterPost($method) {
 
+    if($method == "Recent"){
+
+      $posts = DB::table('posts')
+                ->join('users','posts.user_id','=','users.id')
+                ->select('posts.*','users.image','users.username')
+                ->orderBy('posts.id','DESC')
+                ->get();
+      if(!empty($posts)){
+
+        $allPost = [];
+      foreach($posts as $post){
+        $parsedown  = new Parsedown();
+        $postContent = $parsedown->text($post->content);
+        preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
+        $first_img = "";
+        if (isset($matches[1])) {
+            // there are images
+            $first_img = $matches[1];
+            // strip all images from the text
+            $postContent = preg_replace("/<img[^>]+\>/i", " ", $postContent);
+        }
+        $createdAt = Carbon::parse($post->created_at);
+        $content['title'] = $post->title;
+        $content['body']  = $this->trim_words($postContent, 100);
+        $content['tags']  = $post->tags;
+        $content['slug']  = $this->clean($post->slug);
+        $content['image'] = $first_img;
+        $content['date']  =  $createdAt->format('M jS, Y h:i A');;
+        $content['id'] = $post->id;
+        $content['username'] = $post->username;
+        $content['user_img'] = $post->image;
+
+        array_push($allPost,$content);
+      }
+      return view('filtered-posts')->with(['posts'=>$allPost]);
+
+      }
+    }elseif($method =="Popular"){
+
+
+
+    }
+  }
 }

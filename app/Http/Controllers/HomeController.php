@@ -5,9 +5,11 @@ namespace Lucid\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 use Validator;
 use DB;
 use Storage;
+use Parsedown;
 class HomeController extends Controller
 {
     /**
@@ -81,7 +83,8 @@ foreach ($get as $key => $value) {
     {
       echo "Initiating Fix";
      $fix = new \Lucid\Core\Subscribe(Auth::user()->username);
-      $fix = $fix->fix();
+
+      //$fix = $fix->fix();
     }
     public function timeline($username)
     {
@@ -374,11 +377,86 @@ return true;
 
     }
 
-    public function deletePost($username,$id){
-      return response()->json(['id'=>$id,'username'=>$username],200);
+    public function deletePost(Request $request, $username){
+       $post = DB::table('posts')->where('id',$request->post_id)->first();
+       $parsedown  = new Parsedown();
+       $postContent = $parsedown->text($post->content);
+       preg_match_all('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
+       foreach($matches[1] as $found_img) {
+         $image_name_array = explode('/',$found_img);
+         $img_name = end($image_name_array);
+         $imagePath = storage_path('app/public/'.$post->user_id.'/images/'.$img_name);
+         if(file_exists($imagePath)) {
+           unlink($imagePath);
+         }
+       }
+       DB::table('notifications')->where('post_id',$post->id)->delete();
+        DB::table('extfeeds')->where('title',$post->title)->delete();
+      $deletePost = DB::table('posts')->where('id',$post->id)->delete();
+      if($deletePost) {
+        return response()->json(['success'=>"Post Successfully Deleted"],200);
+      }else{
+        return response()->json(['error'=>"Something not right"],500);
+      }
+
     }
 
+    // debuging tools
+public function checkpost($value)
+{
+   $post = DB::table('posts')->where('id',$value)->first();
+ echo "title: ".$post->title."</br>" ;
+ echo "id: ".$post->id."</br>";
+ echo "user_id: ".$post->user_id."</br>";
+ echo "content: ".$post->content."</br>";
+ echo "slug: ".$post->slug."</br>";
+//print_r( $post);
+echo "feed</br></br></br></br>";
+$post = DB::table('extfeeds')->where('title',$post->title)->first();
+echo "post:title ".$post->title."</br>";
+echo "post:slug ".$post->link."</br>";
 
+$title = "this is live.com live?";
+//$slug = str_replace(' ', '-', $title);
+
+
+echo Str::slug($title);
+}
+public function dropfeed()
+{
+
+  $c = \Lucid\extfeeds::getQuery()->delete();
+  print_r($c);
+}
+public function loadfeed($user)
+{
+
+$post = new \Lucid\Core\Document($user);
+$post = $post->fetchAllRss();
+//dd($post );
+
+print_r($post);
+}
+
+public function postFixer()
+{
+  $oldpost = DB::table('posts')->get();
+  foreach ($oldpost as $key => $value) {
+  //  dd($value->title);
+    $slug = Str::slug($value->title);
+    $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
+
+    $updateFeeds = DB::table('posts')->where(['title'=>$value->title, 'user_id' => $value->user_id])
+    ->update([
+      'slug'=> $slug
+    ]);
+  }
+//  dd($oldpost->title);
+
+print_r($updateFeeds);
+}
+
+//end of debuging tools
     public function saveComment(Request $request, $username) {
 
           $user_id = Auth::user()->id;
@@ -391,7 +469,6 @@ return true;
          return response()->json($validator->messages(), 200);
      }
 
-        $post = DB::table('posts')->where('id', $request->post_id)->first();
 
         if (isset($request->parents_id) && $request->parents_id !== "") {
           // code...
@@ -399,16 +476,22 @@ return true;
         }else {
           $parentPost = null;
         }
-
+        if (isset($request->user_id) && $request->user_id !== "") {
+          // code...
+          $puser_id= $request->user_id;
+        }else {
+          $post = DB::table('posts')->where('id', $request->post_id)->first();
+          $puser_id = $post->user_id;
+        }
     //     dd($post);
       $createComment = DB::table('notifications')->insert([
         'post_id'=>$request->post_id,
         'parent_comment_id'=>$parentPost,
         'comment'=>$request->body,
         'sender_id'=> $user_id,
-        'user_id'=>$post->user_id,
+        'user_id'=>$puser_id,
         'status'=> 0,
-        'action'=>"Commented",
+        'action'=>$request->action,
         'type'=>"Post",
       ]);
  //dd($createComment);
@@ -419,6 +502,33 @@ return true;
         return response()->json(['error'=>'Sorry an error occured while processing your comment.']);
       }
 
+    }
+
+    public function editPost(Request $request, $username) {
+
+        $title = isset($request->title) ? $request->title : '';
+        $content = $request->postVal;
+        $tags = $request->tags;
+        $post_id = $request->post_id;
+
+
+          $initial_images = array_filter($request->all(), function ($key) {
+            return preg_match('/^img-\w*$/', $key);
+        }, ARRAY_FILTER_USE_KEY);
+
+        $images = [];
+        foreach ($initial_images as $key => $value) {
+            $newKey = preg_replace('/_/', '.', $key);
+            $images[$newKey] = $value;
+        }
+        $post = new \Lucid\Core\Document($username);
+        $updatePost = $post->saveUpdatedPost($title, $content, $tags, $images,$username,$post_id);
+
+        if($updatePost){
+          return response()->json(["error" => false, "action"=>"update", "message" => "Post Updated successfully"],200);
+        }else{
+          return response()->json(["error" => true, "action"=>"error", "message" => "Fail while publishing, please try again"]);
+        }
     }
 
 }

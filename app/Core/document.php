@@ -5,6 +5,7 @@ use Parsedown;
 use Mni\FrontYAML\Parser;
 use KzykHys\FrontMatter\FrontMatter;
 use Symfony\Component\Finder\Finder;
+use Illuminate\Support\Str;
 use KzykHys\FrontMatter\Document as Doc;
 use Auth;
 use DB;
@@ -149,9 +150,8 @@ class Document
         $image = null;
       }
 
-      $slug = str_replace(' ', '-', $title);
 
-      $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+      $slug = Str::slug($title);
       $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
       $insertPosts = DB::table('posts')->insert([
         'user_id'=>Auth::user()->id,
@@ -159,7 +159,7 @@ class Document
         'content'=>$content,
         'tags'=>$tags,
         'image'=> $image,
-        'slug'=>strtolower($slug)
+        'slug'=> $slug
       ]);
 
       if ($insertPosts) {
@@ -171,6 +171,59 @@ class Document
     }
 
     }
+
+    public function saveUpdatedPost($title,$content, $tags, $image,$username,$post_id) {
+
+        if (!empty($image)) {
+            $url = Auth::user()->id."/images/";
+            if(is_array($image)) {
+                foreach ($image as $key => $value) {
+
+                    $decoded = base64_decode($image[$key]);
+
+                    $img_path = 'public/'.Auth::user()->id."/images/".$key;
+                  $image = Storage::disk('local')->put( $img_path, $decoded);
+
+                }
+            }
+        }else {
+          $image = null;
+        }
+
+        $slug = Str::slug($title);
+        $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
+        //$slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+        $oldpost = DB::table('posts')->where('id',$post_id)->first('title');
+      //  dd($oldpost->title);
+        $updateFeeds = DB::table('extfeeds')->where('title',$oldpost->title)
+        ->update([
+          'title'=>$title,
+          'des'=>$content,
+          'tags'=>$tags,
+          'image'=> $image,
+          'links'=> $slug
+
+        ]);
+        $updatePosts = DB::table('posts')->where('id',$post_id)->update([
+          'user_id'=>Auth::user()->id,
+          'title'=>$title,
+          'content'=>$content,
+          'tags'=>$tags,
+          'image'=> $image,
+          'slug'=> $slug
+        ]);
+
+        //dd($updateFeeds);
+        if ($updatePosts) {
+
+          return true;
+      } else {
+
+          return false;
+      }
+
+    }
+
     public function createThough($content){
 
 
@@ -231,7 +284,7 @@ class Document
                 $time = $parsedown->text($yaml['timestamp']);
                 $url = $parsedown->text($yaml['post_dir']);
                 $content['title'] = $title;
-                $content['body'] = $this->trim_words($bd, 200);
+                $content['body'] = $bd;
                 $content['url'] = $url;
                 $content['timestamp'] = $time;
                 $content['tags'] = $tags;
@@ -255,19 +308,22 @@ class Document
 
             foreach ($posts as $key => $value) {
               $title = strip_tags($value['title']);
-              $slug = str_replace(' ', '-', $title);
-              $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+              $slug = Str::slug($title);
               $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
-
+              if(DB::table('posts')->where(['title' => $title, 'user_id' => Auth::user()->id])->exists() ==1){
+                $updatePosts = DB::table('posts')->update([
+                  'content'=> $value['body']
+                ]);
+              }else {
               $insertPosts = DB::table('posts')->insert([
                 'user_id'=>Auth::user()->id,
                 'title'=>  $title,
                 'content'=> $value['body'],
                 'tags'=>$value['tags'],
                 'image'=> $value['image'],
-                'slug'=>strtolower($slug)
+                'slug'=>$slug
               ]);
-
+}
 
             };
           Storage::deleteDirectory($this->user.'/content/'.$postTypeSubDir.'/');
@@ -337,7 +393,11 @@ public function Feeds()
   $feed = [];
 foreach ($urlArray as $id) {
   $user= DB::table('users')->where('id', $id['follower_id'])->first('name');
-  $feeds = DB::table('extfeeds')->where('site', $user->name)->get();
+
+  $feeds = DB::table('extfeeds')
+  ->join('users','extfeeds.site','=','users.name')
+  ->select('extfeeds.*','users.username','users.email','users.image')
+  ->where('site', $user->name)->get();
 //  dd($feeds );
     $feeds = json_decode($feeds, true);
   array_push($feed, $feeds);
@@ -491,7 +551,7 @@ public function checker()
                         'site_image'       => $user->image,
                         'title'            => strip_tags($value['title']),
                         'des'             =>  strip_tags($value['body']),
-                        'link'             => $this->user."/post/" . strtolower(strip_tags($value['slug' ])),
+                        'link'             => $this->user."/post/" . $value['slug' ],
                         'date'    => $value['date'],
                         'image'   => $value['image'],
                       ]);
@@ -949,8 +1009,9 @@ $user = Auth::user();
     public function getPost($username,$postSlug){
     //  $user = $this->user($username);
       $user =   DB::table('users')->where('username', $username)->first();
-
+    //   echo $postSlug;
       $post = DB::table('posts')->where(['slug'=>$postSlug,'user_id'=>$user->id])->first();
+    //   dd($post);
       if(!empty($post)) {
 
         $parsedown  = new Parsedown();
@@ -958,8 +1019,8 @@ $user = Auth::user();
         $content['tags'] = $post->tags;
         $content['title'] =$post->title;
         $content['body'] = $parsedown->text($post->content);
-        $content['date'] = $createdAt->format('l jS \\of F Y h:i A');
-        $content['slug'] = $this->clean($post->slug);
+        $content['date'] = $createdAt->format('M jS, Y h:i A');
+        $content['slug'] = $post->slug;
         $content['id'] = $post->id;
         return $content;
 
@@ -996,7 +1057,7 @@ $user = Auth::user();
         //  $user =  $this->user($username);
           $user =   DB::table('users')->where('username', $this->user)->first();
 
-          $posts = DB::table('posts')->where('user_id',$user->id)->get();
+          $posts = DB::table('posts')->where('user_id',$user->id)->orderBy('id','DESC')->get();
           if(!empty($posts)){
 
             $allPost = [];
@@ -1015,15 +1076,12 @@ $user = Auth::user();
             $content['title'] = $post->title;
             $content['body']  = $this->trim_words($postContent, 200);
             $content['tags']  = $post->tags;
-            $content['slug']  = $this->clean($post->slug);
+            $content['slug']  = $post->slug;
             $content['image'] = $first_img;
-            $content['date']  =  $createdAt->format('l jS \\of F Y h:i A');;
+            $content['date']  =  $createdAt->format('M jS, Y h:i A');;
             $content['id'] = $post->id;
             array_push($allPost,$content);
           }
-        //  $this->fetchAllRss();
-        //    dd($allPost);
-          krsort($allPost);
           return $allPost;
 
           }

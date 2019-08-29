@@ -86,7 +86,7 @@
 
 
     @if (empty($feeds->site_image))
-  <img src="{{ asset('img/logo.jpg') }}" class="img-fluid img-thumb" alt="user" />
+  <img src="{{ secure_asset('img/logo.jpg') }}" class="img-fluid img-thumb" alt="user" />
   @else
   <img src="{{ $feeds->site_image}}" class="img-fluid img-thumb" alt="user" />
   @endif
@@ -130,7 +130,7 @@
 
 
 <!-- @isset($post['crawlerImage'])
-        <img src="{{URL::to('/')}}/storage/{{$post['crawlerImage']}}" alt="" class="single-post-img" style="width:100%" class="my-1">
+        <img src="{{secure_url('/')}}/storage/{{$post['crawlerImage']}}" alt="" class="single-post-img" style="width:100%" class="my-1">
         @endisset -->
 
 
@@ -397,7 +397,7 @@ function deletePost(id){
 
       j.ajax({
           type:'GET',
-          url:"{{ route('deletePost',['username'=>'ssfd','id'=>"+ j{id} +"])  }}",
+          url:"{{ secure_url('deletePost',['username'=>'ssfd','id'=>"+ j{id} +"])  }}",
           contentType:false,
           processData:false,
           success:function(data){
@@ -449,3 +449,30 @@ function deletePost(id){
         //   $pathArr = explode('/',$fullPath);
         //   $fullPath = '/storage/'.Auth::user()->id.'/images//'.end($pathArr);
         // }
+
+        <script>
+    //const c = jQuery.noConflict();
+    $(document).ready(function (){
+      id ={{$comment->id}};
+      //function Getreply() {
+      const route = "{{ secure_url('reply',['username'=>$user->username])  }}"
+      $.ajaxSetup({
+        headers:{
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+      })
+      //  setInterval(() => {
+      console.log(route);
+      $.ajax({
+        type:'GET',
+        url:route,
+        data:{id:id},
+        contentType:false,
+        processData:true,
+        success:function (data){
+          $('#reply'+id).html(data);
+        }
+      })
+      //}
+    });
+  </script>
