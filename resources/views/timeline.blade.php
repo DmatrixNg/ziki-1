@@ -310,8 +310,13 @@ $location = 'timeline';
                     <span class="text-muted">{{$feeds['date']}}</span>
                     </small>
                   </span>
-                  <span class="col-6 col-sm-6 col-md-4">
-                    <a href="" class="mr-1"><i class="icon ion-md-thumbs-up text-warning" style="font-size: 1.2em;"></i> 5</a>
+                  <span onload="checker()" class="col-6 col-sm-6 col-md-4">
+                    <span id="like{{$feeds['id']}}">
+                      <button type="button" title="like this Post" onclick='like(1,{{ $feeds["id"] }})' class="btn">
+                        <i class="icon ion-md-thumbs-up" style="font-size: 1.2em;"></i>
+                        <sub id="count{{$feeds['id']}}"></sub>
+                      </button>
+                    </span>
                     <a href="" class="mr-1"><i class="icon ion-md-heart text-danger" style="font-size: 1.2em;"></i> 5</a>
                     <a href="{{URL::to('/')}}/{{$feeds['link']}}"><i class="icon ion-md-text text-primary" style="font-size: 1.2em;"></i> 5</a>
                   </span>

@@ -33,6 +33,7 @@ class pageController extends Controller
                 $post = new \Lucid\Core\Document($username);
 
                 $post = $post->Feeds();
+              //  dd($post);
             //$post =[];
                 $sub = new \Lucid\Core\Subscribe($username);
                 $fcount = $sub->myfollowercount();
