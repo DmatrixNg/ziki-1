@@ -88,6 +88,7 @@ Route::prefix('{username}')->group(function () {
     Route::post('/save-comment','HomeController@saveComment')->name('save-comment');
     Route::get('/notif','pageController@notification');
     Route::post('/edit-post','HomeController@editPost');
-    Route::get('/replies','pageController@reply')->name('reply');
-Route::get('/like','ReactionsController@like')->name('getLike');
+    Route::get('/reply','pageController@reply');
+    Route::get('/like','ReactionsController@like');
+    Route::get('/love','ReactionsController@love');
 });

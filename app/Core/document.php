@@ -310,7 +310,7 @@ class Document
               $title = strip_tags($value['title']);
               $slug = Str::slug($title);
               $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
-              if(DB::table('posts')->where(['title' => $title, 'user_id' => Auth::user()->id])->exists() ==1){
+              if(DB::table('posts')->where(['title' => $title])->exists() ==1){
                 $updatePosts = DB::table('posts')->update([
                   'content'=> $value['body']
                 ]);
@@ -385,31 +385,32 @@ class Document
 
 public function Feeds()
 {
-  $user = Auth::user();
-  $data= DB::table('following')->where('my_id', $user['id'])->get();
-  //$data=[];
-  $urlArray = json_decode($data, true);
+            $user = Auth::user();
+            $data= DB::table('following')->where('my_id', $user['id'])->get();
+            //$data=[];
+            $urlArray = json_decode($data, true);
 
-  $feed = [];
-foreach ($urlArray as $id) {
-  $user= DB::table('users')->where('id', $id['follower_id'])->first('name');
+            $feed = [];
+          foreach ($urlArray as $id) {
+            $user= DB::table('users')->where('id', $id['follower_id'])->first('name');
 
-  $feeds = DB::table('extfeeds')
-  ->join('users','extfeeds.site','=','users.name')
-  ->select('extfeeds.*','users.username','users.email','users.image')
-  ->where('site', $user->name)->get();
-//  dd($feeds );
-    $feeds = json_decode($feeds, true);
-  array_push($feed, $feeds);
+            $feeds = DB::table('extfeeds')
+            ->join('users','extfeeds.site','=','users.name')
+            ->join('posts','extfeeds.title','=','posts.title')
+            ->select('extfeeds.*','posts.id','users.username','users.email','users.image')
+            ->where('site', $user->name)->get();
+          //  dd($feeds );
+              $feeds = json_decode($feeds, true);
+            array_push($feed, $feeds);
 }
-  $ex =[];
-  for ($i=0; $i < count($feed) ; $i++) {
-    for ($j=0; $j <count($feed[$i]) ; $j++) {
-       $rv=$feed[$i][$j];
-    //   krsort($rv);
-      array_push($ex, $rv);
-      //dd($ex);
-    }
+          $ex =[];
+          for ($i=0; $i < count($feed) ; $i++) {
+            for ($j=0; $j <count($feed[$i]) ; $j++) {
+               $rv=$feed[$i][$j];
+            //   krsort($rv);
+              array_push($ex, $rv);
+              //dd($ex);
+            }
   }
   //dd($ex);
   usort($ex, $this->build_sorter('id'));

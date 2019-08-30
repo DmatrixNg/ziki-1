@@ -275,7 +275,7 @@ $location = 'timeline';
           <div class="col-md-12">
             <?php $last = count($posts);
             ?>
-            @foreach ($posts as $feeds)
+            @foreach($posts as $feeds)
             <div class="post-content">
               <!--           @if (empty($feeds['site_image']))
                   <img src="{{ secure_asset('img/logo.jpg') }}" class="img-fluid img-thumb" alt="user" />
@@ -300,19 +300,59 @@ $location = 'timeline';
                     <span class="text-muted">{{$feeds['date']}}</span>
                     </small>
                   </span>
-                  <span onload="checker()" class="col-6 col-sm-6 col-md-4">
+                  <span class="col-6 col-sm-6 col-md-4">
+                    @php
+                    $lcount = \Lucid\Notification::where(['post_id' => $feeds['id'],'action' => "Like"])->count();
+                    @endphp
+                    @foreach($likes as $like)
+                    @if($like->post_id == $feeds['id'] && $like->sender_id == Auth::user()->id)
+                    <span id="like{{$feeds['id']}}">
+                    <button type='button' title='unlike this Post' onclick='like(0,{{$feeds["id"]}})' class='btn'><i class='icon ion-md-thumbs-up text-warning' style='font-size: 1.2em;'></i>
+                    <sub id="lcount{{$feeds['id']}}">{{ $lcount }}</sub>
+                    </button></span>
+                    @else
                     <span id="like{{$feeds['id']}}">
                       <button type="button" title="like this Post" onclick='like(1,{{ $feeds["id"] }})' class="btn">
                         <i class="icon ion-md-thumbs-up" style="font-size: 1.2em;"></i>
-                        <sub id="count{{$feeds['id']}}"></sub>
+                        <sub id="lcount{{$feeds['id']}}">{{ $lcount }}</sub>
                       </button>
                     </span>
-                    <a href="" class="mr-1"><i class="icon ion-md-heart text-danger" style="font-size: 1.2em;"></i> 5</a>
-                    <a href="{{secure_url('/')}}/{{$feeds['link']}}"><i class="icon ion-md-text text-primary" style="font-size: 1.2em;"></i> 5</a>
-                  </span>  -->
+                    @endif
+                    @endforeach
+
+                    @php
+                    $count = \Lucid\Notification::where(['post_id' => $feeds['id'],'action' => "Love"])->count();
+                    @endphp
+                    @foreach ($loves as $love)
+                    @if($love->post_id == $feeds['id'] && $love->sender_id == Auth::user()->id)
+                    <span id="love{{$feeds['id']}}">
+                    <button type='button' title='unlove this Post' onclick='love(0,{{$feeds["id"]}})' class='btn'>
+                      <i class="icon ion-md-heart text-danger" style="font-size: 1.2em;"></i>
+                    <sub id="count{{$feeds['id']}}">{{ $count }}</sub>
+                    </button></span>
+                    @else
+                    <span id="love{{$feeds['id']}}">
+                      <button type="button" title="love this Post" onclick='love(1,{{ $feeds["id"] }})' class="btn">
+                        <i class="icon ion-md-heart" style="font-size: 1.2em;"></i>
+                        <sub id="count{{$feeds['id']}}">{{ $count }}</sub>
+                      </button>
+                    </span>
+                    @endif
+                    @endforeach
+                    @php
+                    $ccount = \Lucid\Notification::where(['post_id' => $feeds['id'],'action' => "Commented"])->count();
+                    @endphp
+                    <a href="{{secure_url('/')}}/{{$feeds['link']}}#comment">
+                      <button type="button"  class="btn">
+                      <i class="icon ion-md-text text-primary" style="font-size: 1.2em;"></i>
+                      <sub id="count{{$feeds['id']}}">{{ $ccount }}</sub>
+                    </button>
+                    </a>
+                  </span>
                 </div>
               </div>
             </div>
+
             @endforeach
           </div>
         </div>

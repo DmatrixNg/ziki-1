@@ -270,7 +270,7 @@
   const a = jQuery.noConflict();
   function like(action,id) {
 
-    url = "{{ route('getLike',['username'=>$user->username])  }}";
+      url = "{{ secure_url($user->username.'/like')  }}";
   //  id=id+"&act="+action;
     a.ajax({
       url:url,
@@ -287,6 +287,25 @@
     });
 
       }
+      function love(action,id) {
+
+        url = "{{ secure_url($user->username.'/love')  }}";
+      //  id=id+"&act="+action;
+        a.ajax({
+          url:url,
+          type:"Get",
+          data:{id:id,act:action},
+          dataType:"json",
+          })
+        .then (
+          function(data) {
+
+              console.log(data);
+          a('#love'+id).html(data.button);
+        //  a('#count'+id).html(data.count);
+        });
+
+          }
     function changeUrl(e) {
       history.pushState(null, null, `/${document.getElementById("username").value+'/'+e}`)
     }

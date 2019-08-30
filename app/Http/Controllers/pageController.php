@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use Parsedown;
 use URL;
+use Lucid\Notification;
 use Carbon\Carbon;
 class pageController extends Controller
 {
@@ -52,9 +53,26 @@ class pageController extends Controller
                   $count = "";
                 }
 
+                $likes = DB::table('notifications')
+                      ->join('posts','notifications.post_id','=','posts.id')
+                      ->select('notifications.*', 'posts.id')
+                      ->where('notifications.action','=',"like")
+                      ->get();
 
-  //dd($fcheck);
-                return view('timeline', ['posts' => $post,'fcheck' => $fcheck,'user'=>$user,'fcount'=>$fcount, 'count' => $count]);
+                $loves = DB::table('notifications')
+                      ->join('posts','notifications.post_id','=','posts.id')
+                      ->select('notifications.*', 'posts.id')
+                      ->where('notifications.action','=',"Love")
+                      ->get();
+  //dd($likes);
+                return view('timeline', [
+                  'posts' => $post,
+                  'fcheck' => $fcheck,
+                  'user'=>$user,
+                  'fcount'=>$fcount,
+                  'likes' => $likes,
+                  'loves' => $loves,
+                  'count' => $count]);
 
         }else {
 
@@ -211,8 +229,17 @@ class pageController extends Controller
               else {
                 $fcheck = "no";
               }
-
-            return view('post',compact('user','posts'), ['fcheck' => $fcheck, 'fcount'=>$fcount, 'count' => $count ]);
+              $likes = DB::table('notifications')
+                      ->where('post_id',$post_id)
+                      ->where('notifications.action','=',"like")
+                      ->get();
+                    //  dd(  $like );
+            return view('post',compact('user','posts'), [
+              'fcheck' => $fcheck,
+              'fcount'=>$fcount,
+              'count' => $count,
+              'likes' => $likes
+            ]);
         }else {
             return redirect('/'.$username);
         }
