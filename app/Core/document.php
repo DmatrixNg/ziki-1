@@ -201,7 +201,7 @@ class Document
           'des'=>$content,
           'tags'=>$tags,
           'image'=> $image,
-          'links'=> $slug
+          'link'=> $slug
 
         ]);
         $updatePosts = DB::table('posts')->where('id',$post_id)->update([
