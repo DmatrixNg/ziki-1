@@ -303,9 +303,10 @@ $location = 'timeline';
                   <span class="col-6 col-sm-6 col-md-4">
                     @php
                     $lcount = \Lucid\Notification::where(['post_id' => $feeds['id'],'action' => "Like"])->count();
+                    $likes = \Lucid\Notification::where(['post_id' => $feeds['id'], 'sender_id' => Auth::user()->id,'action' => "Like"])->first();
+                  //  dd($likes);
                     @endphp
-                    @foreach($likes as $like)
-                    @if($like->post_id == $feeds['id'] && $like->sender_id == Auth::user()->id)
+                    @if(!empty($likes))
                     <span id="like{{$feeds['id']}}">
                     <button type='button' title='unlike this Post' onclick='like(0,{{$feeds["id"]}})' class='btn'><i class='icon ion-md-thumbs-up text-warning' style='font-size: 1.2em;'></i>
                     <sub id="lcount{{$feeds['id']}}">{{ $lcount }}</sub>
@@ -318,13 +319,13 @@ $location = 'timeline';
                       </button>
                     </span>
                     @endif
-                    @endforeach
 
                     @php
                     $count = \Lucid\Notification::where(['post_id' => $feeds['id'],'action' => "Love"])->count();
+                    $love = \Lucid\Notification::where(['post_id' => $feeds['id'], 'sender_id' => Auth::user()->id,'action' => "Love"])->first();
+
                     @endphp
-                    @foreach ($loves as $love)
-                    @if($love->post_id == $feeds['id'] && $love->sender_id == Auth::user()->id)
+                    @if(!empty($love))
                     <span id="love{{$feeds['id']}}">
                     <button type='button' title='unlove this Post' onclick='love(0,{{$feeds["id"]}})' class='btn'>
                       <i class="icon ion-md-heart text-danger" style="font-size: 1.2em;"></i>
@@ -338,7 +339,6 @@ $location = 'timeline';
                       </button>
                     </span>
                     @endif
-                    @endforeach
                     @php
                     $ccount = \Lucid\Notification::where(['post_id' => $feeds['id'],'action' => "Commented"])->count();
                     @endphp

@@ -70,7 +70,6 @@ class pageController extends Controller
                   'fcheck' => $fcheck,
                   'user'=>$user,
                   'fcount'=>$fcount,
-                  'likes' => $likes,
                   'loves' => $loves,
                   'count' => $count]);
 
